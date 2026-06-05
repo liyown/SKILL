@@ -1,0 +1,31 @@
+diff --git a/src/main/java/com/example/order/OrderService.java b/src/main/java/com/example/order/OrderService.java
+index 2a7d111..b4f92a0 100644
+--- a/src/main/java/com/example/order/OrderService.java
++++ b/src/main/java/com/example/order/OrderService.java
+@@ -12,6 +12,7 @@ public class OrderService {
+     private final OrderMapper orderMapper;
+     private final AccountMapper accountMapper;
+     private final PaymentClient paymentClient;
++
+     public void pay(Long userId, Long orderId) {
+         doPay(userId, orderId);
+     }
+@@ -21,9 +22,13 @@ public class OrderService {
+     public void doPay(Long userId, Long orderId) {
+         Order order = orderMapper.selectById(orderId);
++        if (order.getStatus().equals("PAID")) {
++            return;
++        }
+         Account account = accountMapper.selectByUserId(userId);
+         accountMapper.decrease(userId, order.getAmount());
++        paymentClient.charge(account.getPayToken(), order.getAmount());
+         order.setStatus("PAID");
+         orderMapper.updateById(order);
+     }
+@@ -34,6 +39,7 @@ public class OrderService {
+         QueryWrapper<Order> wrapper = new QueryWrapper<>();
+         wrapper.eq("status", status);
++        wrapper.last("order by " + sort);
+         return orderMapper.selectList(wrapper);
+     }
+ }
