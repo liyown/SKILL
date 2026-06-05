@@ -16,14 +16,13 @@
 
 ## Entry Points
 
-- `skill.md`: platform-neutral entrypoint for any agent runtime
-- `SKILL.md`: Codex/OpenAI-compatible entrypoint
+- `SKILL.md`: platform-neutral entrypoint with Codex/OpenAI-compatible frontmatter
 - `manifest.json`: portable package metadata
 - `agents/openai.yaml`: optional OpenAI UI metadata
 
 ## Usage
 
-Load `skill.md`, then load `prompts/reviewer.md`. Add scenario prompts only when they match the reviewed code:
+Load `SKILL.md`, then load `prompts/reviewer.md`. Add scenario prompts only when they match the reviewed code:
 
 - `prompts/spring-reviewer.md`
 - `prompts/mybatis-reviewer.md`
@@ -99,7 +98,6 @@ Artifacts are written to `dist/`:
 ```text
 .
 ├── SKILL.md
-├── skill.md
 ├── manifest.json
 ├── agents/
 │   └── openai.yaml

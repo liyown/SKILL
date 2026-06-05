@@ -36,7 +36,6 @@ The default target is:
 ├── skills/
 │   └── java-code-reviewer/
 │       ├── registry.json
-│       ├── skill.md
 │       ├── SKILL.md
 │       ├── manifest.json
 │       ├── agents/

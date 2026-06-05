@@ -13,11 +13,6 @@
           "target": "~/.skills/java-code-reviewer/README.md"
         },
         {
-          "path": "skill.md",
-          "type": "registry:file",
-          "target": "~/.skills/java-code-reviewer/skill.md"
-        },
-        {
           "path": "SKILL.md",
           "type": "registry:file",
           "target": "~/.skills/java-code-reviewer/SKILL.md"

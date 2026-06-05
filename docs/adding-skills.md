@@ -15,7 +15,6 @@ Recommended files:
 ```text
 skills/<skill-name>/
 ├── registry.json
-├── skill.md
 ├── SKILL.md
 ├── manifest.json
 ├── prompts/
@@ -23,7 +22,7 @@ skills/<skill-name>/
 └── agents/
 ```
 
-`skill.md` is the platform-neutral entrypoint. `SKILL.md` is kept only when a runtime needs that exact filename.
+`SKILL.md` is the platform-neutral entrypoint and may include runtime-specific frontmatter. Avoid keeping both `skill.md` and `SKILL.md` in the same directory because case-insensitive filesystems treat them as the same path.
 
 ## Nested Registry
 
@@ -33,9 +32,9 @@ Use explicit targets:
 
 ```json
 {
-  "path": "skill.md",
+  "path": "SKILL.md",
   "type": "registry:file",
-  "target": "~/.skills/<skill-name>/skill.md"
+  "target": "~/.skills/<skill-name>/SKILL.md"
 }
 ```
 

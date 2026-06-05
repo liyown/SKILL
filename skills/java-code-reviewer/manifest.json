@@ -7,7 +7,7 @@
   "license": "MIT",
   "language": "zh-CN",
   "entrypoints": {
-    "generic": "skill.md",
+    "generic": "SKILL.md",
     "codex": "SKILL.md",
     "openai_ui": "agents/openai.yaml"
   },
