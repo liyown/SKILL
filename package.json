@@ -1,0 +1,27 @@
+{
+  "name": "skills-registry",
+  "version": "0.1.0",
+  "description": "A shadcn-compatible source registry for reusable AI skills.",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liyown/skills-registry.git"
+  },
+  "scripts": {
+    "validate": "./scripts/validate.sh",
+    "build": "./scripts/build.sh",
+    "shadcn:validate": "npx shadcn@latest registry validate"
+  },
+  "keywords": [
+    "skills",
+    "ai-skills",
+    "agents",
+    "shadcn",
+    "registry",
+    "code-review"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

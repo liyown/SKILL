@@ -1,4 +1,4 @@
-name: Build Skill Artifact
+name: Build Skills Registry
 
 on:
   push:
@@ -13,8 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate
+      - name: Validate local registry
         run: ./scripts/validate.sh
+
+      - name: Validate shadcn registry
+        run: npx shadcn@latest registry validate
 
       - name: Build artifacts
         run: ./scripts/build.sh
@@ -22,8 +25,10 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: java-code-reviewer
+          name: skills-registry
           path: |
+            dist/registry.json
+            dist/items/*.json
             dist/*.tar.gz
             dist/*.zip
             dist/SHA256SUMS

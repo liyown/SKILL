@@ -1,82 +1,72 @@
-# Java Code Reviewer Skill
+# Skills Registry
 
-`java-code-reviewer` is a platform-neutral prompt skill for strict Java backend code review. It focuses on production-risk issues rather than generic style comments.
+This repository is a shadcn-compatible source registry for reusable AI skills. It is designed to hold all future skills in one public GitHub registry.
 
-## What It Reviews
+## Install Items
 
-- Business correctness, idempotency, duplicate submission, and state transitions
-- Null and boundary risks
-- Transaction consistency and Spring proxy failures
-- Concurrency safety, distributed locks, async work, and duplicate consumption
-- MyBatis / MyBatis-Plus SQL, Wrapper, batch, and indexing risks
-- Security issues such as authorization bypass, SQL injection, tenant leaks, sensitive logs, path traversal, SSRF, command injection, and secrets
-- Performance issues in DB, cache, RPC, JSON, regex, streams, and large collections
-- Reactor / WebFlux misuse
-- DDD and layered architecture problems
+List available skills:
 
-## Entry Points
+```sh
+pnpm dlx shadcn@latest list liyown/skills-registry
+```
 
-- `skill.md`: platform-neutral entrypoint for any agent runtime
-- `SKILL.md`: Codex/OpenAI-compatible entrypoint
-- `manifest.json`: portable package metadata
-- `agents/openai.yaml`: optional OpenAI UI metadata
+View an item before installing:
 
-## Usage
+```sh
+pnpm dlx shadcn@latest view liyown/skills-registry/java-code-reviewer
+```
 
-Load `skill.md`, then load `prompts/reviewer.md`. Add scenario prompts only when they match the reviewed code:
+Install the Java reviewer skill into the current project:
 
-- `prompts/spring-reviewer.md`
-- `prompts/mybatis-reviewer.md`
-- `prompts/security-reviewer.md`
+```sh
+pnpm dlx shadcn@latest add liyown/skills-registry/java-code-reviewer
+```
 
-Example invocation:
+The default target is:
 
 ```text
-Use java-code-reviewer to review this Java PR diff. Only output production-risk findings.
+.skills/java-code-reviewer/
 ```
 
-## Output Contract
-
-If no clear high-risk issue is found:
+## Registry Layout
 
 ```text
-未发现明确高风险问题。
+.
+├── registry.json
+├── skills/
+│   └── java-code-reviewer/
+│       ├── registry.json
+│       ├── skill.md
+│       ├── SKILL.md
+│       ├── manifest.json
+│       ├── agents/
+│       ├── prompts/
+│       └── examples/
+├── scripts/
+└── .github/workflows/
 ```
 
-If findings exist, group them by severity:
+The root `registry.json` contains registry metadata and composes skill entries with `include`. Each skill owns its own nested `registry.json`, keeping future additions small and reviewable.
 
-````markdown
-# Critical
+## Add A Skill
 
-## 1. 问题标题
+1. Create `skills/<skill-name>/`.
+2. Add the skill files under that directory.
+3. Add `skills/<skill-name>/registry.json` with a single `registry:item`.
+4. Add the nested registry path to the root `registry.json` `include` array.
+5. Run validation and build.
 
-位置：
-`类名#方法名` 或具体代码片段
+Use `registry:file` entries with explicit `target` paths. The default convention is:
 
-问题：
-说明具体错误。
-
-影响：
-说明可能导致的线上问题。
-
-建议：
-说明应该如何修改。
-
-推荐代码：
-```java
-// 修改后的代码
+```text
+~/.skills/<skill-name>/<file>
 ```
 
-# High
-
-# Medium
-
-# Low
-````
+In shadcn registry targets, `~` resolves to the consumer project's root.
 
 ## Build
 
-Validate the package:
+Validate local registry structure:
 
 ```sh
 ./scripts/validate.sh
@@ -90,32 +80,19 @@ Build distributable artifacts:
 
 Artifacts are written to `dist/`:
 
-- `java-code-reviewer-<version>.tar.gz`
-- `java-code-reviewer-<version>.zip`, when `zip` is available
+- `registry.json`: flattened registry payload with included items resolved
+- `items/*.json`: generated registry item payloads
+- `skills-registry-<version>.tar.gz`
+- `skills-registry-<version>.zip`, when `zip` is available
 - `SHA256SUMS`
 
-## Repository Layout
+## GitHub Registry Notes
 
-```text
-.
-├── SKILL.md
-├── skill.md
-├── manifest.json
-├── agents/
-│   └── openai.yaml
-├── examples/
-│   ├── bad-service.java
-│   ├── pr-diff-example.diff
-│   └── review-output.md
-├── prompts/
-│   ├── reviewer.md
-│   ├── spring-reviewer.md
-│   ├── mybatis-reviewer.md
-│   └── security-reviewer.md
-└── scripts/
-    ├── build.sh
-    └── validate.sh
-```
+GitHub registry installation requires a public GitHub repository with `registry.json` at the repository root. Private registries require a separate namespace and authentication setup.
+
+## Included Skills
+
+- `java-code-reviewer`: strict Java backend production-risk code review
 
 ## License
 

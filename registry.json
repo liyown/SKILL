@@ -1,0 +1,8 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "liyown-skills",
+  "homepage": "https://github.com/liyown/skills-registry",
+  "include": [
+    "skills/java-code-reviewer/registry.json"
+  ]
+}

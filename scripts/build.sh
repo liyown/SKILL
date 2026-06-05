@@ -6,24 +6,25 @@ cd "$ROOT"
 
 ./scripts/validate.sh
 
-NAME=$(node -e 'process.stdout.write(require("./manifest.json").name)')
-VERSION=$(node -e 'process.stdout.write(require("./manifest.json").version)')
+NAME=$(node -e 'process.stdout.write(require("./package.json").name)')
+VERSION=$(node -e 'process.stdout.write(require("./package.json").version)')
 DIST="$ROOT/dist"
 PACKAGE_DIR="$DIST/$NAME-$VERSION"
 
-rm -rf "$PACKAGE_DIR"
-rm -f "$DIST/$NAME-$VERSION.tar.gz" "$DIST/$NAME-$VERSION.zip" "$DIST/SHA256SUMS"
-mkdir -p "$PACKAGE_DIR"
+rm -rf "$DIST"
+mkdir -p "$DIST/items" "$PACKAGE_DIR"
+
+node scripts/validate-registry.mjs --write-dist
 
 for path in \
-  SKILL.md \
-  skill.md \
-  manifest.json \
+  registry.json \
   README.md \
   LICENSE \
-  agents \
-  examples \
-  prompts
+  package.json \
+  docs \
+  skills \
+  scripts \
+  .github
 do
   cp -R "$path" "$PACKAGE_DIR/"
 done
@@ -36,10 +37,14 @@ fi
 
 (
   cd "$DIST"
-  files="$NAME-$VERSION.tar.gz"
+  files="$NAME-$VERSION.tar.gz registry.json"
   if [ -f "$NAME-$VERSION.zip" ]; then
     files="$files $NAME-$VERSION.zip"
   fi
+
+  for item in items/*.json; do
+    files="$files $item"
+  done
 
   if command -v sha256sum >/dev/null 2>&1; then
     sha256sum $files > SHA256SUMS
