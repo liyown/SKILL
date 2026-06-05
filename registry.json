@@ -3,6 +3,9 @@
   "name": "liyown-skills",
   "homepage": "https://github.com/liyown/skills-registry",
   "include": [
-    "skills/java-code-reviewer/registry.json"
+    "skills/java-code-reviewer/registry.json",
+    "skills/react-code-reviewer/registry.json",
+    "skills/project-knowledge-capture/registry.json",
+    "skills/goal-driven-development/registry.json"
   ]
 }

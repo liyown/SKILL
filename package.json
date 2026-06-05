@@ -1,6 +1,6 @@
 {
   "name": "skills-registry",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A shadcn-compatible source registry for reusable AI skills.",
   "private": true,
   "license": "MIT",
@@ -19,7 +19,9 @@
     "agents",
     "shadcn",
     "registry",
-    "code-review"
+    "code-review",
+    "goal-driven-development",
+    "codegraph"
   ],
   "engines": {
     "node": ">=18"

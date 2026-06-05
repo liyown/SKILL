@@ -1,0 +1,4 @@
+interface:
+  display_name: "Goal Driven Development"
+  short_description: "CodeGraph-assisted build workflow"
+  default_prompt: "Use $goal-driven-development to implement this existing spec with CodeGraph context, review gates, and knowledge capture."

@@ -1,38 +1,20 @@
 # Java Code Reviewer Skill
 
-`java-code-reviewer` is a platform-neutral prompt skill for strict Java backend code review. It focuses on production-risk issues rather than generic style comments.
+`java-code-reviewer` is an evidence-driven Java backend review skill. It is tuned for production-risk findings, not broad style critique.
 
 ## What It Reviews
 
-- Business correctness, idempotency, duplicate submission, and state transitions
-- Null and boundary risks
-- Transaction consistency and Spring proxy failures
-- Concurrency safety, distributed locks, async work, and duplicate consumption
-- MyBatis / MyBatis-Plus SQL, Wrapper, batch, and indexing risks
-- Security issues such as authorization bypass, SQL injection, tenant leaks, sensitive logs, path traversal, SSRF, command injection, and secrets
-- Performance issues in DB, cache, RPC, JSON, regex, streams, and large collections
-- Reactor / WebFlux misuse
-- DDD and layered architecture problems
+- Business correctness, state transitions, idempotency, duplicate submission
+- Null, boundary, exception, transaction, and concurrency paths
+- Spring proxy behavior, rollback rules, async/scheduled/cache annotations
+- MyBatis / MyBatis-Plus SQL generation, Wrapper conditions, tenant filters, bulk writes
+- Security, authorization, tenant isolation, injection, sensitive logs
+- Redis/Kafka consistency, retries, ordering, duplicate delivery
+- Reactor/WebFlux blocking, subscription, timeout, retry, context, EventLoop usage
 
-## Entry Points
+## Prompt Loading
 
-- `SKILL.md`: platform-neutral entrypoint with Codex/OpenAI-compatible frontmatter
-- `manifest.json`: portable package metadata
-- `agents/openai.yaml`: optional OpenAI UI metadata
-
-## Usage
-
-Load `SKILL.md`, then load `prompts/reviewer.md`. Add scenario prompts only when they match the reviewed code:
-
-- `prompts/spring-reviewer.md`
-- `prompts/mybatis-reviewer.md`
-- `prompts/security-reviewer.md`
-
-Example invocation:
-
-```text
-Use java-code-reviewer to review this Java PR diff. Only output production-risk findings.
-```
+Always load `prompts/reviewer.md`. Load scenario prompts only when code evidence requires them.
 
 ## Output Contract
 
@@ -42,79 +24,22 @@ If no clear high-risk issue is found:
 未发现明确高风险问题。
 ```
 
-If findings exist, group them by severity:
+When findings exist, output only findings grouped by Critical / High / Medium / Low. Every finding must include code location, trigger path, production impact, and the smallest useful fix.
 
-````markdown
-# Critical
-
-## 1. 问题标题
-
-位置：
-`类名#方法名` 或具体代码片段
-
-问题：
-说明具体错误。
-
-影响：
-说明可能导致的线上问题。
-
-建议：
-说明应该如何修改。
-
-推荐代码：
-```java
-// 修改后的代码
-```
-
-# High
-
-# Medium
-
-# Low
-````
-
-## Build
-
-Validate the package:
-
-```sh
-./scripts/validate.sh
-```
-
-Build distributable artifacts:
-
-```sh
-./scripts/build.sh
-```
-
-Artifacts are written to `dist/`:
-
-- `java-code-reviewer-<version>.tar.gz`
-- `java-code-reviewer-<version>.zip`, when `zip` is available
-- `SHA256SUMS`
-
-## Repository Layout
+## Files
 
 ```text
 .
 ├── SKILL.md
 ├── manifest.json
-├── agents/
-│   └── openai.yaml
-├── examples/
-│   ├── bad-service.java
-│   ├── pr-diff-example.diff
-│   └── review-output.md
+├── agents/openai.yaml
 ├── prompts/
 │   ├── reviewer.md
 │   ├── spring-reviewer.md
 │   ├── mybatis-reviewer.md
-│   └── security-reviewer.md
-└── scripts/
-    ├── build.sh
-    └── validate.sh
+│   ├── security-reviewer.md
+│   ├── concurrency-reviewer.md
+│   ├── reactor-reviewer.md
+│   └── redis-kafka-reviewer.md
+└── examples/
 ```
-
-## License
-
-MIT

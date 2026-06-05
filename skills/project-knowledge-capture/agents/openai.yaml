@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Knowledge Capture"
+  short_description: "Capture project decisions and context"
+  default_prompt: "Use $project-knowledge-capture to write durable project knowledge for this completed change."

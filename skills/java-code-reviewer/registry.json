@@ -5,7 +5,7 @@
       "name": "java-code-reviewer",
       "type": "registry:item",
       "title": "Java Code Reviewer Skill",
-      "description": "Strict Java backend code review skill focused on production-risk issues in Spring Boot, Spring Cloud, MyBatis, MyBatis-Plus, Redis, Kafka, Reactor, WebFlux, transactions, concurrency, security, performance, DDD, and microservices.",
+      "description": "Evidence-driven Java backend code review skill focused on production-risk issues in Spring Boot, Spring Cloud, MyBatis, MyBatis-Plus, Redis, Kafka, Reactor, WebFlux, transactions, concurrency, security, performance, DDD, and microservices.",
       "files": [
         {
           "path": "README.md",
@@ -48,6 +48,21 @@
           "target": "~/.skills/java-code-reviewer/prompts/security-reviewer.md"
         },
         {
+          "path": "prompts/concurrency-reviewer.md",
+          "type": "registry:file",
+          "target": "~/.skills/java-code-reviewer/prompts/concurrency-reviewer.md"
+        },
+        {
+          "path": "prompts/reactor-reviewer.md",
+          "type": "registry:file",
+          "target": "~/.skills/java-code-reviewer/prompts/reactor-reviewer.md"
+        },
+        {
+          "path": "prompts/redis-kafka-reviewer.md",
+          "type": "registry:file",
+          "target": "~/.skills/java-code-reviewer/prompts/redis-kafka-reviewer.md"
+        },
+        {
           "path": "examples/bad-service.java",
           "type": "registry:file",
           "target": "~/.skills/java-code-reviewer/examples/bad-service.java"
@@ -61,6 +76,21 @@
           "path": "examples/review-output.md",
           "type": "registry:file",
           "target": "~/.skills/java-code-reviewer/examples/review-output.md"
+        },
+        {
+          "path": "examples/transaction-self-invocation.java",
+          "type": "registry:file",
+          "target": "~/.skills/java-code-reviewer/examples/transaction-self-invocation.java"
+        },
+        {
+          "path": "examples/wrapper-injection.java",
+          "type": "registry:file",
+          "target": "~/.skills/java-code-reviewer/examples/wrapper-injection.java"
+        },
+        {
+          "path": "examples/duplicate-payment-consumer.java",
+          "type": "registry:file",
+          "target": "~/.skills/java-code-reviewer/examples/duplicate-payment-consumer.java"
         }
       ]
     }

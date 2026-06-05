@@ -52,6 +52,16 @@ function resolveRegistry(relativePath, allItems, seenNames, stack = []) {
     if (item.type !== "registry:item") {
       throw new Error(`${item.name} must use type registry:item`);
     }
+    if (item.registryDependencies !== undefined) {
+      if (!Array.isArray(item.registryDependencies)) {
+        throw new Error(`${item.name} registryDependencies must be an array`);
+      }
+      for (const dependency of item.registryDependencies) {
+        if (typeof dependency !== "string" || dependency.trim() === "") {
+          throw new Error(`${item.name} registryDependencies must contain non-empty strings`);
+        }
+      }
+    }
 
     const files = item.files || [];
     if (files.length === 0) {
@@ -121,6 +131,16 @@ if (!rootRegistry.include || rootRegistry.include.length === 0) {
 const items = [];
 resolveRegistry("registry.json", items, new Set());
 validateSkillManifests();
+
+const itemNames = new Set(items.map((item) => item.name));
+for (const item of items) {
+  for (const dependency of item.registryDependencies || []) {
+    const match = dependency.match(/^liyown\/skills-registry\/([a-z0-9-]+)(?:#.+)?$/);
+    if (match && !itemNames.has(match[1])) {
+      throw new Error(`${item.name} depends on missing local item: ${dependency}`);
+    }
+  }
+}
 
 if (writeDist) {
   const distDir = path.resolve(root, "dist");
