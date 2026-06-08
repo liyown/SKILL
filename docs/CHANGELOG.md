@@ -7,6 +7,30 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.9 (2026-06-08)
+
+Tag: `v0.3.9`. Commits since v0.3.8: 1.
+
+### Changed
+
+- Router strengthening extended to the two meta-skills.
+  `goal-driven-development` description now ends with "minimizing
+  the risk of a reverted merge, a missed dependency, or a
+  code-review block at PR time". `project-knowledge-capture`
+  description now ends with "so the next developer (or the
+  next session) can answer 'why was this done' and 'what to be
+  careful about' in minutes, not days".
+- All 7 skills now end their frontmatter `description` with a
+  severity-tier router clause. The router strength was rolled
+  out in 3 commits: v0.3.8 for the 5 reviewers, v0.3.9 for the
+  2 meta-skills.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.9 --skill java-code-reviewer
+```
+
 ## 0.3.8 (2026-06-08)
 
 Tag: `v0.3.8`. Commits since v0.3.7: 2.

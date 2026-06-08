@@ -6,26 +6,26 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.8** (2026-06-08). Pin to a specific tag with `#v0.3.8`:
+**v0.3.9** (2026-06-08). Pin to a specific tag with `#v0.3.9`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.8 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.9 --skill java-code-reviewer
 ```
 
-v0.3.7 → v0.3.8 strengthens the `SKILL.md` frontmatter
-`description` field on all 5 reviewer skills. The router clause
-now ends with "focusing on capital-loss, data-corruption,
-authorization-bypass, and incident-causing defects" (and the
-frontend equivalent for react) so the consumer's match step
-also sees the severity tier — "any review where a production
-incident is the worst case" — not just the technology stack.
-2 commits since v0.3.7.
+v0.3.8 → v0.3.9 extends the router-strengthening pattern to the
+two meta-skills. `goal-driven-development` now ends with
+"minimizing the risk of a reverted merge, a missed dependency,
+or a code-review block at PR time". `project-knowledge-capture`
+now ends with "so the next developer (or the next session) can
+answer 'why was this done' and 'what to be careful about' in
+minutes, not days". 1 commit since v0.3.8.
 
-This release also exercises the new `--bump-mode minor` flag in
-`scripts/release.sh` (v0.3.7 → v0.4.0; reset patch to 0).
+All 7 skill frontmatter descriptions now end with a
+severity-tier router clause. 4 commits of router tuning across
+v0.3.8 and v0.3.9.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.3.7..v0.3.8` for the full
+and per-version highlights. Run `git log v0.3.8..v0.3.9` for the full
 diff since the last release.
 
 ## Install
