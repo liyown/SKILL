@@ -3,6 +3,7 @@
 Cross-reference for every release of this skills registry. The git
 tag is the source of truth; this index is a human-readable map to
 the GitHub release page, the in-repo mirror, and the cumulative
+| `v0.3.5` | 2026-06-08 | 2 since v0.3.4 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.5> | [v0.3.5.md](v0.3.5.md) |
 changelog.
 
 ## Releases (newest first)
