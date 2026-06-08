@@ -1,3 +1,33 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# Editors / tooling
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local agent / harness state (claude-code, codex, etc.)
+.claude/
+.codex/
+.cursor/
+
+# Local install destinations for this skill collection
+.skills/
+
+# Build / registry artifacts (kept out of source even if reintroduced later)
 dist/
+*.tar.gz
+*.zip
+SHA256SUMS
+
+# Logs
 *.log
