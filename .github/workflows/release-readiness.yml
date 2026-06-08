@@ -1,0 +1,53 @@
+name: release-readiness
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: offline structural checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run smoke + examples + validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/validate.sh
+
+  dry-run-release:
+    name: release dry-run
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # release.sh needs tag history
+
+      - name: Run release dry-run
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./scripts/release.sh --dry-run
+
+      - name: Verify no tag was created
+        shell: bash
+        run: |
+          set -euo pipefail
+          # A dry-run must not advance the tag. If a new tag exists in
+          # this ref, the release flow was not actually a dry-run.
+          if git describe --tags --exact-match HEAD 2>/dev/null; then
+            echo "FAIL: HEAD is at a tag; dry-run should not create tags"
+            exit 1
+          fi
+          echo "ok: HEAD is not a tag (dry-run did not mutate)"
