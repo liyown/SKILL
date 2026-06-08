@@ -6,23 +6,21 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.3** (2026-06-08). Pin to a specific tag with `#v0.3.3`:
+**v0.3.4** (2026-06-08). Pin to a specific tag with `#v0.3.4`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.3 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.4 --skill java-code-reviewer
 ```
 
-v0.3.2 → v0.3.3 adds the **release-readiness CI workflow**
-(`.github/workflows/release-readiness.yml`) which runs `validate.sh`
-and `release.sh --dry-run` on every push to `main`, and brings
-`pr-diff-example.diff` to the last three reviewers (node, python,
-react) so all five reviewers now ship the same example asset
-surface. README adds the "Skills at a Glance" routing tables so
-consumers can pick the right skill without parsing frontmatter.
-5 commits since v0.3.2.
+v0.3.3 → v0.3.4 extends `scripts/release.sh` with two new flags:
+`--notes-from <file>` validates a release notes file and prints the
+exact `gh release create` command to run after the tag is pushed
+(replacing the brittle inline `gh release create --notes "..."` flow
+that broke on shell-globbed content), and `--no-publish` creates the
+tag locally without pushing. 2 commits since v0.3.3.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.3.2..v0.3.3` for the full
+and per-version highlights. Run `git log v0.3.3..v0.3.4` for the full
 diff since the last release.
 
 ## Install

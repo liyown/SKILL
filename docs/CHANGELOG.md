@@ -7,6 +7,31 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.4 (2026-06-08)
+
+Tag: `v0.3.4`. Commits since v0.3.3: 2.
+
+### Changed
+
+- `scripts/release.sh` extended with two new flags:
+  - `--notes-from <file>` validates the file exists and prints the
+    exact `gh release create ...` command to run after the tag is
+    pushed. Replaces the brittle inline `gh release create --notes "..."`
+    flow that broke on shell-globbed content during the v0.3.3
+    release.
+  - `--no-publish` creates the tag locally without pushing. Useful
+    for staged releases and for rehearsing the dry-run before the
+    real push.
+  - Both flags are reflected in the `--dry-run` preview so a
+    consumer can sanity-check the would-be command before running
+    with `--yes`.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.4 --skill java-code-reviewer
+```
+
 ## 0.3.3 (2026-06-08)
 
 Tag: `v0.3.3`. Commits since v0.3.2: 5.
