@@ -77,6 +77,39 @@ install that other skill separately. Concrete cases in this collection:
 - `goal-driven-development` — CodeGraph-assisted implementation workflow for existing specs/goals.
 - `project-knowledge-capture` — durable project knowledge capture into `docs/knowledge/`.
 
+## Skills at a Glance
+
+Pick the skill whose description best matches what you are doing.
+The first sentence of each `description` is the router the consumer
+uses to decide whether to load the skill.
+
+### Reviewers (load when reviewing a diff)
+
+| Skill | Load when you are … |
+| --- | --- |
+| `java-code-reviewer` | … reviewing a Java / Spring / MyBatis / Kafka / Reactor change |
+| `react-code-reviewer` | … reviewing a React / TypeScript / Next.js change (frontend, not Node backend) |
+| `go-code-reviewer` | … reviewing a Go / gRPC / sqlx change |
+| `python-code-reviewer` | … reviewing a Python / asyncio / SQLAlchemy / FastAPI change |
+| `node-code-reviewer` | … reviewing a Node.js / Express / Fastify / Prisma / TypeORM change |
+
+Each reviewer ships a `prompts/reviewer.md` (severity ladder + output
+contract) and 6-10 scenario-specific prompts (see the Coverage
+Matrix below). Bad/good `.java` / `.tsx` / `.go` / `.py` / `.ts`
+example pairs in `examples/` show the minimum fix for the most
+common production-risk findings.
+
+### Workflows (load when executing a goal)
+
+| Skill | Load when you are … |
+| --- | --- |
+| `goal-driven-development` | … turning an existing spec into code with verification, review gates, and knowledge capture |
+| `project-knowledge-capture` | … done with a task and want durable project knowledge persisted into `docs/knowledge/` |
+
+These are not reviewers; they are end-to-end workflows that may
+invoke the reviewers as helpers. See "Cross-Skill Dependencies"
+above for the combined install command for `goal-driven-development`.
+
 ## Reviewer Coverage Matrix
 
 Each reviewer skill loads `prompts/reviewer.md` (core protocol) and one or
