@@ -6,20 +6,21 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.5** (2026-06-08). Pin to a specific tag with `#v0.3.5`:
+**v0.3.6** (2026-06-08). Pin to a specific tag with `#v0.3.6`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.5 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.6 --skill java-code-reviewer
 ```
 
-v0.3.4 → v0.3.5 adds `docs/releases/INDEX.md`, a cross-reference
-for every release: date, commit count since the previous tag,
-GitHub release URL, and the in-repo mirror file path. Includes a
-"How a release flows" section documenting the `release.sh` flags
-and the `release-readiness` CI workflow. 1 commit since v0.3.4.
+v0.3.5 → v0.3.6 adds the GitHub collaboration templates (bug
+report, feature request, blank-issues config, and PR template)
+so external contributors' first contact with the repo is
+structured. The PR template's self-checklist explicitly points at
+`validate.sh`, the bad/good pairing rule, the Coverage Matrix,
+and `release.sh --dry-run`. 3 commits since v0.3.5.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.3.4..v0.3.5` for the full
+and per-version highlights. Run `git log v0.3.5..v0.3.6` for the full
 diff since the last release.
 
 ## Install

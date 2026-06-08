@@ -7,6 +7,32 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.6 (2026-06-08)
+
+Tag: `v0.3.6`. Commits since v0.3.5: 3.
+
+### Added
+
+- `.github/ISSUE_TEMPLATE/bug_report.md` — structured bug report
+  with pre-flight checklist pointing at `validate.sh`,
+  `CONTRIBUTING.md`, and `docs/releases/INDEX.md`.
+- `.github/ISSUE_TEMPLATE/feature_request.md` — structured
+  proposal for new skills or scenario prompts, with a pre-flight
+  pointing at the Coverage Matrix and the "What Makes A Great
+  Skill" section.
+- `.github/ISSUE_TEMPLATE/config.yml` — disables blank issues
+  and surfaces the release index, contributing guide, and
+  "What Makes A Great Skill" as contact links.
+- `.github/PULL_REQUEST_TEMPLATE.md` — 8-item self-check
+  covering `validate.sh` exit, bad/good pairing, README sync,
+  Coverage Matrix update, and `release.sh --dry-run` preview.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.6 --skill java-code-reviewer
+```
+
 ## 0.3.5 (2026-06-08)
 
 Tag: `v0.3.5`. Commits since v0.3.4: 1.
