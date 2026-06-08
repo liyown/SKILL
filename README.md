@@ -84,11 +84,15 @@ reviewer covers; cell entries are the scenario prompt file names.
 | --- | --- | --- | --- | --- | --- |
 | Framework / runtime | `spring-reviewer.md` | `nextjs-reviewer.md` | `rpc-reviewer.md` | `web-reviewer.md` | `http-reviewer.md` |
 | Concurrency / async | `concurrency-reviewer.md`, `reactor-reviewer.md` | — | `concurrency-reviewer.md` | `async-reviewer.md` | `async-reviewer.md` |
-| Error handling | — | — | `error-reviewer.md` | `error-reviewer.md` | `error-reviewer.md` |
+| Error handling | — | `error-boundary-reviewer.md` | `error-reviewer.md` | `error-reviewer.md` | `error-reviewer.md` |
 | Database / ORM | `mybatis-reviewer.md` | — | `sql-reviewer.md` | `sql-reviewer.md` | `sql-reviewer.md` |
 | Caching / messaging | `redis-kafka-reviewer.md` | — | — | — | — |
 | Security | `security-reviewer.md` | `security-reviewer.md` | `security-reviewer.md` | `security-reviewer.md` | `security-reviewer.md` |
-| Performance | — | `performance-reviewer.md` | — | — | — |
+| Performance / bundle | — | `performance-reviewer.md`, `bundle-reviewer.md` | — | — | — |
+| Forms / validation | — | `forms-reviewer.md` | — | — | — |
+| State management | — | `state-reviewer.md` | — | — | — |
+| Accessibility (a11y) | — | `a11y-reviewer.md` | — | — | — |
+| Testing | — | `testing-reviewer.md` | — | — | — |
 
 A `—` cell means the reviewer has no dedicated scenario prompt for that
 category. Add a `<scenario>-reviewer.md` under the relevant `prompts/`

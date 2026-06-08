@@ -1,6 +1,6 @@
 ---
 name: react-code-reviewer
-description: Review React, TypeScript, Next.js, and Vite frontend changes for production-risk bugs in hooks, state, async effects, routing, authorization UI, SSR/CSR boundaries, hydration, security, accessibility, performance, and maintainability. Use for React code review, frontend PR review, diff review, or release-risk inspection.
+description: Review React, TypeScript, Next.js, and Vite frontend changes for production-risk bugs in hooks, state, async effects, routing, authorization UI, SSR/CSR boundaries, hydration, security, accessibility, performance, forms, validation, testing, error boundaries, bundle size, state management, and maintainability. Use for React code review, frontend PR review, diff review, or release-risk inspection.
 metadata:
   short-description: Evidence-driven React frontend review
 ---
@@ -18,6 +18,12 @@ Load additional prompts only when relevant:
 - `prompts/nextjs-reviewer.md`: Next.js App Router, Server/Client Components, server actions, route handlers, cache, hydration.
 - `prompts/security-reviewer.md`: XSS, unsafe HTML/URLs, token storage, open redirects, sensitive data exposure.
 - `prompts/performance-reviewer.md`: unnecessary renders, memo misuse, bundle growth, request waterfalls, large lists.
+- `prompts/testing-reviewer.md`: Jest, Vitest, React Testing Library, Playwright, Cypress; behaviour-driven assertions, `act()` wrapping, mock scoping.
+- `prompts/forms-reviewer.md`: react-hook-form, Formik, Zod, server actions; submit disable, double-submit, schema-driven error mapping.
+- `prompts/state-reviewer.md`: Redux Toolkit, Zustand, Jotai, Context; selector memoisation, store splitting, SSR hydration.
+- `prompts/a11y-reviewer.md`: keyboard, screen reader, ARIA, focus management, contrast, live regions, reduced motion.
+- `prompts/error-boundary-reviewer.md`: top-level vs route-level boundaries, event-handler async errors, fallback UX, log forwarding.
+- `prompts/bundle-reviewer.md`: tree-shaking, dynamic imports, route-level code splitting, icon imports, barrel files.
 
 ## Review Contract
 
