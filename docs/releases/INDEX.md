@@ -9,6 +9,7 @@ changelog.
 
 | Tag | Date | Commits | GitHub Release | In-repo mirror |
 | --- | --- | --- | --- | --- |
+| `v0.3.7` | 2026-06-08 | 1 since v0.3.6 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.7> | [v0.3.7.md](v0.3.7.md) |
 | `v0.3.6` | 2026-06-08 | 3 since v0.3.5 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.6> | [v0.3.6.md](v0.3.6.md) |
 | `v0.3.5` | 2026-06-08 | 2 since v0.3.4 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.5> | [v0.3.5.md](v0.3.5.md) |
 | `v0.3.4` | 2026-06-08 | 4 since v0.3.3 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.4> | [v0.3.4.md](v0.3.4.md) |

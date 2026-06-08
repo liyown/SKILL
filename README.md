@@ -6,21 +6,21 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.6** (2026-06-08). Pin to a specific tag with `#v0.3.6`:
+**v0.3.7** (2026-06-08). Pin to a specific tag with `#v0.3.7`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.6 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.7 --skill java-code-reviewer
 ```
 
-v0.3.5 → v0.3.6 adds the GitHub collaboration templates (bug
-report, feature request, blank-issues config, and PR template)
-so external contributors' first contact with the repo is
-structured. The PR template's self-checklist explicitly points at
-`validate.sh`, the bad/good pairing rule, the Coverage Matrix,
-and `release.sh --dry-run`. 3 commits since v0.3.5.
+v0.3.6 → v0.3.7 adds `--bump-mode patch|minor|major` to
+`scripts/release.sh`. The patch mode is the default; minor bumps
+the minor component and resets patch to 0; major bumps major and
+resets both. `--bump X.Y.Z` still works and overrides the mode
+for non-monotonic cases. The complete release flag surface is
+now 7 flags. 1 commit since v0.3.6.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.3.5..v0.3.6` for the full
+and per-version highlights. Run `git log v0.3.6..v0.3.7` for the full
 diff since the last release.
 
 ## Install

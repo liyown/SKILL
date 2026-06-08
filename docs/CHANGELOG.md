@@ -7,6 +7,26 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.7 (2026-06-08)
+
+Tag: `v0.3.7`. Commits since v0.3.6: 1.
+
+### Changed
+
+- `scripts/release.sh` adds `--bump-mode patch|minor|major`. The
+  default is `patch` (preserves prior behaviour). `minor` resets
+  the patch component to 0 and increments the minor; `major`
+  resets both minor and patch to 0 and increments the major.
+  `--bump X.Y.Z` still works and overrides the mode for
+  non-monotonic cases. The complete release flag surface is
+  now 7 flags.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.7 --skill java-code-reviewer
+```
+
 ## 0.3.6 (2026-06-08)
 
 Tag: `v0.3.6`. Commits since v0.3.5: 3.
