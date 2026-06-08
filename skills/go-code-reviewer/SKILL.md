@@ -1,6 +1,6 @@
 ---
 name: go-code-reviewer
-description: Review Go backend services, pull requests, diffs, and snippets for production-risk issues in goroutines, channels, context propagation, error handling, defer/panic, sqlx/GORM, gRPC/HTTP servers, generics, memory, and microservice architecture. Use for Go code review, PR review, diff review, bug-risk review, architecture review, or release-blocking inspection.
+description: Review Go backend services, pull requests, diffs, and snippets for production-risk bugs in goroutines, channels, context propagation, error handling, defer/panic, sqlx/GORM, gRPC/HTTP servers, generics, memory, and microservice architecture — focusing on capital-loss, data-corruption, authorization-bypass, and incident-causing defects. Use for Go code review, PR review, diff review, bug-risk review, architecture review, release-blocking inspection, or any review where a production incident is the worst case.
 metadata:
   short-description: Evidence-driven Go backend review
 ---
