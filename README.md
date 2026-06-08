@@ -6,15 +6,19 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.0** (2026-06-08). Pin to a specific tag with `#v0.3.0`:
+**v0.3.1** (2026-06-08). Pin to a specific tag with `#v0.3.1`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.0 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.1 --skill java-code-reviewer
 ```
 
+v0.3.0 → v0.3.1 adds `scripts/release.sh` (tag-driven release flow) and
+a footer that links the Reviewer Coverage Matrix to per-prompt See also
+lines. 3 commits since v0.3.0.
+
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. 11 commits since v0.2.0; see
-`git log v0.2.0..v0.3.0` for the full diff.
+and per-version highlights. Run `git log v0.2.0..v0.3.1` for the full
+diff since the last registry release.
 
 ## Install
 
