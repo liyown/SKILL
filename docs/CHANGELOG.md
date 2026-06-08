@@ -7,6 +7,43 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.3 (2026-06-08)
+
+Tag: `v0.3.3`. Commits since v0.3.2: 5.
+
+### Added
+
+- `.github/workflows/release-readiness.yml` — two-stage CI gate
+  on every push / PR to `main`:
+  1. `validate` runs `./scripts/validate.sh` (smoke + examples +
+     full structural validation).
+  2. `release-dry-run` runs `./scripts/release.sh --dry-run` and
+     asserts no new tag exists at HEAD, so a regression in the
+     release flow cannot pass CI unnoticed.
+- `pr-diff-example.diff` added to `node-code-reviewer`,
+  `python-code-reviewer`, and `react-code-reviewer`. All five
+  reviewers now ship the same example asset surface: whole-file
+  `bad-service.*` + `good-service.*`, per-scenario `bad-*` /
+  `good-*` pairs, `review-output.md`, and `pr-diff-example.diff`.
+- README "Skills at a Glance" routing tables — two tables
+  (Reviewers, Workflows) that mirror the first clause of each
+  skill's `description` field, so consumers can pick the right
+  skill without parsing every frontmatter.
+
+### Changed
+
+- `actions/checkout` bumped from `v4` to `v5` in
+  `.github/workflows/release-readiness.yml` to silence the
+  Node.js 20 deprecation warning and use Node 24 by default.
+- `CONTRIBUTING.md` already has the "What Makes A Great Skill"
+  section (added in 0.3.2); no further change here.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.3 --skill java-code-reviewer
+```
+
 ## 0.3.2 (2026-06-08)
 
 Tag: `v0.3.2`. Commits since v0.3.1: 7.
