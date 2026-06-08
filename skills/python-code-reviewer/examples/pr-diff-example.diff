@@ -1,0 +1,33 @@
+diff --git a/order/service.py b/order/service.py
+index 2a7d111..b4f92a0 100644
+--- a/order/service.py
++++ b/order/service.py
+@@ -12,6 +12,7 @@ class OrderService:
+     def __init__(self, db, pay_client, limiter):
+         self.db = db
+         self.pay = pay_client
++        self.cache: dict[int, Order] = {}
+         self.limiter = limiter
+ 
+     async def pay(self, user_id, order_id, now):
+@@ -21,9 +22,13 @@ class OrderService:
+         if not self.limiter.hit(user_id, now):
+             return {"ok": False, "reason": "rate_limited"}
+ 
+-        row = self.db.execute(text("SELECT * FROM orders WHERE id = :id"), {"id": order_id}).first()
++        row = self.db.execute(
++            text(f"SELECT * FROM orders WHERE id = {order_id}"),
++        ).first()
+         if row is None:
+             return {"ok": False, "reason": "not_found"}
+         if row.status == "PAID":
+             return {"ok": True}
+ 
+@@ -34,6 +39,7 @@ class OrderService:
+         try:
+             resp = await self.pay.post(url, json=body)
+         except httpx.HTTPError as e:
++            self.cache[order_id] = row
+             return {"ok": False, "reason": "charge_failed", "error": str(e)}
+         self.db.commit()
+         return {"ok": True}
