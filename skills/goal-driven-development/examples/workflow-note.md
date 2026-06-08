@@ -12,5 +12,5 @@ Implement the existing spec for order status filtering.
 2. Use CodeGraph to locate order list entrypoints and query path.
 3. Implement the smallest scoped change.
 4. Run the nearest tests.
-5. Run Java or React review depending on touched files.
+5. Run Java, React, Go, Python, or Node review depending on touched files.
 6. Capture stable knowledge in `docs/knowledge/`.

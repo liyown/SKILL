@@ -1,36 +1,70 @@
 # CodeGraph Usage Prompt
 
-CodeGraph 默认指 `@colbymchenry/codegraph`。它通过 MCP/CLI 暴露代码知识图谱，适合回答“哪里实现”“谁调用谁”“改这里影响哪里”“调用路径是什么”。
+> See also: prompts/workflow.md
 
-## 优先级
 
-1. CodeGraph MCP
-   - 先用 `codegraph_status` 检查索引。
-   - 用 `codegraph_context` 获取任务上下文。
-   - 用 `codegraph_search` 找符号。
-   - 用 `codegraph_callers` / `codegraph_callees` 看上下游。
-   - 用 `codegraph_trace` 分析调用路径。
-   - 用 `codegraph_impact` 评估变更影响半径。
-   - 用 `codegraph_files` 看索引文件结构。
+CodeGraph defaults to `@colbymchenry/codegraph`. It exposes a code knowledge graph through MCP/CLI, suitable for "where is it implemented", "who calls whom", "what does this change affect", and "what is the call path".
 
-2. CodeGraph CLI
-   - MCP 不可用但 CLI 可用时，使用 `codegraph status`、`codegraph context`、`codegraph query`、`codegraph impact`、`codegraph affected`。
-   - 如项目未初始化，提示运行 `codegraph init -i`。
+## Priority
 
-3. Fallback
-   - CodeGraph 不可用时，降级到 `rg`、语言服务、测试命名和文件阅读。
-   - 必须在最终说明中记录：`CodeGraph unavailable, fell back to rg/file inspection`。
+### 1. CodeGraph MCP (preferred)
 
-## 使用原则
+First call `codegraph_status` to check that the index is ready, then:
 
-- 架构、调用链、影响范围问题优先用 CodeGraph，而不是盲目 `rg`。
-- CodeGraph 输出是导航证据，不是业务规则证明。
-- 对关键风险必须回到源码或测试确认。
-- 不要为了使用 CodeGraph 而重复调用；拿到足够上下文后就停止探索。
+- `codegraph_context`: task context for a goal summary
+- `codegraph_search`: locate by symbol name
+- `codegraph_callers` / `codegraph_callees`: upstream and downstream
+- `codegraph_trace`: end-to-end call path
+- `codegraph_impact`: change impact radius
+- `codegraph_files`: see the structure of indexed files
 
-## 典型查询
+### 2. CodeGraph CLI (fallback)
 
-- 找入口：`codegraph_context` with goal summary。
-- 找调用方：`codegraph_callers` on service/handler/function symbol。
-- 找影响面：`codegraph_impact` on changed symbol。
-- 找路径：`codegraph_trace` from controller/route to persistence/external call。
+When MCP is unavailable but the CLI works, use:
+
+- `codegraph status`, `codegraph context`, `codegraph query`, `codegraph impact`, `codegraph affected`
+- If the repo is not initialised, suggest `codegraph init -i`
+
+### 3. Fallback (no CodeGraph)
+
+Only when `codegraph_status` reports unavailability (not installed, not indexed, version mismatch, cannot reach the service) do you fall back to local means. **Fallback has a cost** — a question CodeGraph answers in one query often needs 2-5 manual `rg`/file reads in fallback mode, so only ask questions that actually affect the implementation path.
+
+Fallback order:
+
+1. `rg` (ripgrep) for precise symbol/string/file pattern search
+2. Language service / IDE reference (`tsc --noEmit`, `go doc`, `javap`, JSDoc / PyDoc comments)
+3. Infer behaviour from test naming conventions (`*_test.go`, `*.spec.ts`, `OrderServiceTest`)
+4. Source-code read of the entry path (1-2 levels of calls from the entry)
+
+**Mandatory declaration**: regardless of the fallback path, after the CodeGraph context phase you must include the following line in the final report:
+
+```text
+CodeGraph unavailable; context was gathered by rg/file inspection.
+```
+
+This declaration is the only signal a reviewer or reviewer-downstream uses to assess "is there graph-level evidence". **Do not silently downgrade** — even if the gathered information looks sufficient, declare.
+
+**Stop-loss**: if 3 consecutive `rg` queries still cannot find a critical symbol, stop exploring and ask the user about the repo structure or request the user to add context, rather than running 5 more `rg` and overwhelming the context.
+
+### 4. When to Stop Calling CodeGraph
+
+Stop CodeGraph calls and switch to the implementation phase when any of the following holds:
+
+- You have the five elements: entry point, key symbols, call chain, impact radius, test entry.
+- The same target returned the same conclusion in 2 consecutive queries.
+- Any `codegraph_status` in the past 5 minutes already reported unavailable — go straight to fallback, do not probe again.
+
+## Usage Principles
+
+- Prefer CodeGraph for architecture, call chain, and impact questions over blind `rg`.
+- CodeGraph output is navigation evidence, not proof of business rules — for critical risks, go back to the source code or tests to confirm.
+- Do not call CodeGraph redundantly for its own sake; stop exploring once you have enough context.
+- Per session, at most 2 CodeGraph queries for the same target — beyond that is waste.
+
+## Typical Queries
+
+- Find entry: `codegraph_context` with goal summary
+- Find callers: `codegraph_callers` on service/handler/function symbol
+- Find impact: `codegraph_impact` on changed symbol
+- Find path: `codegraph_trace` from controller/route to persistence/external call
+- Find test entry: `codegraph_files` filtered with `*test*` + `codegraph_context` with query "tests for <symbol>"
