@@ -1,0 +1,24 @@
+diff --git a/internal/order/service.go b/internal/order/service.go
+index 2a7d111..b4f92a0 100644
+--- a/internal/order/service.go
++++ b/internal/order/service.go
+@@ -10,12 +10,15 @@ func (s *OrderService) Pay(ctx context.Context, userID, orderID int64) error {
+ 	var o Order
+-	row := s.db.QueryRow("SELECT * FROM orders WHERE id = ?", orderID)
++	row := s.db.QueryRow(fmt.Sprintf("SELECT * FROM orders WHERE id = %d", orderID))
+ 	if err := row.Scan(&o.ID, &o.UserID, &o.Amount, &o.Status); err != nil {
+ 		return err
+ 	}
+-	if o.Status == "PAID" {
+-		return nil
++	if o.Status == "PAID" {
++		return fmt.Errorf("order paid: %v", sql.ErrNoRows)
+ 	}
+-	_, _ = s.payClient.Do(req)
++	resp, err := s.payClient.Do(req)
++	if err != nil {
++		log.Fatal(err)
++	}
++	defer resp.Body.Close()
+ 	return nil
+ }
