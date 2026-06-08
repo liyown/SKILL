@@ -11,7 +11,7 @@
 
 - Goal and context
 - Key code entrypoints
-- CodeGraph findings
+- CodeGraph findings, or the exact fallback line `CodeGraph unavailable; context was gathered by rg/file inspection.` followed by the `rg` queries and files consulted
 - Decisions and consequences
 - Verification results
 - Review conclusions

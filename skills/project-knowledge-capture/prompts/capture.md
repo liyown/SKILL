@@ -1,25 +1,28 @@
 # Project Knowledge Capture Prompt
 
-## 目标
+> See also: (none — this is the only prompt in this skill)
 
-把开发完成后仍然有价值的项目知识沉淀到仓库文档中。输出应该帮助未来开发者快速理解“为什么这么做”“入口在哪里”“以后改哪里要小心”。
 
-## 默认位置
+## Goal
+
+Persist project knowledge that remains valuable after a development task is complete, into the repository's documentation. The output should help future developers quickly understand "why was this done", "where is the entry point", and "what to be careful about when changing this later".
+
+## Default Locations
 
 - `docs/knowledge/index.md`
 - `docs/knowledge/YYYY-MM-DD-<goal-slug>.md`
 
-`goal-slug` 使用小写英文、数字和连字符；如果目标没有英文名称，根据代码域生成简短 slug。
+`goal-slug` uses lowercase English letters, digits, and dashes; if the goal has no English name, generate a short slug from the code domain.
 
-## 写入规则
+## Writing Rules
 
-- 只写稳定事实和已做决策。
-- 用代码路径、类名、组件名、测试命令作为证据。
-- 如果来自 CodeGraph，记录为 “CodeGraph findings”。
-- 不记录聊天流水、失败尝试、临时命令输出、模型思考、未验证猜测。
-- 不写 secret、token、客户隐私、生产数据、敏感日志。
+- Write only stable facts and made decisions.
+- Use code paths, class names, component names, and test commands as evidence.
+- If the content came from CodeGraph, label it "CodeGraph findings".
+- Do not record chat transcripts, failed attempts, temporary command output, model thinking, or unverified guesses.
+- Do not write secrets, tokens, customer privacy data, production data, or sensitive logs.
 
-## 笔记模板
+## Note Template
 
 ```markdown
 # <Goal Title>
@@ -28,72 +31,75 @@ Date: YYYY-MM-DD
 
 ## Goal
 
-本次目标和最终完成范围。
+The current goal and the final delivered scope.
 
 ## Context
 
-相关业务/技术背景，只写未来会复用的信息。
+Relevant business / technical background; only the parts future readers will reuse.
 
 ## Key Entrypoints
 
-- `path/File.ext`: 说明入口职责。
+- `path/File.ext`: the entry's responsibility.
 
 ## CodeGraph Findings
 
-- 关键符号、调用链、影响半径。
-- 如果 CodeGraph 不可用，写：`CodeGraph unavailable; context was gathered by rg/file inspection.`
+- Key symbols, call chain, impact radius.
+- If CodeGraph is unavailable:
+  `CodeGraph unavailable; context was gathered by rg/file inspection.`
+  Next line: list the `rg` queries used and the files read.
+- Fallback evidence is "tooling", not "decision".
 
 ## Decisions
 
-- Context: 当时面对的问题或约束。
-- Decision: 已采用的方案。
-- Consequences: 后续收益、代价、需要注意的地方。
+- Context: the problem or constraint at the time.
+- Decision: the chosen approach.
+- Consequences: the gains, costs, and caveats going forward.
 
 ## Verification
 
-- 运行过的测试/构建/类型检查。
-- 无法运行时记录原因。
+- Tests / builds / type checks that were run.
+- If something could not be run, record the reason.
 
 ## Review Conclusions
 
-- Java/React reviewer 的 Critical/High 结论。
-- 若无高风险：`未发现明确高风险问题。`
+- Java / React / Go / Python / Node reviewer Critical/High conclusions.
+- If no high-risk issues: `未发现明确高风险问题。`
 
 ## Follow-up Notes
 
-- 后续改动时需要注意的稳定约束。
+- Stable constraints to keep in mind for future changes.
 ```
 
-## Index 更新规则
+## Index Update Rule
 
-`docs/knowledge/index.md` 至少包含：
+`docs/knowledge/index.md` should at least contain:
 
 ```markdown
 # Project Knowledge
 
 | Date | Topic | Summary |
 | --- | --- | --- |
-| YYYY-MM-DD | [Goal Title](YYYY-MM-DD-goal-slug.md) | 一句话摘要 |
+| YYYY-MM-DD | [Goal Title](YYYY-MM-DD-goal-slug.md) | One-line summary |
 ```
 
-按日期倒序插入最新记录。
+Insert the latest record in reverse chronological order.
 
-## 反例
+## Anti-example
 
-不要写：
+Do not write:
 
 ```markdown
-今天先运行测试失败，然后改了三次，最后好了。
+Today the tests failed, I retried three times, eventually it worked.
 ```
 
-这是过程噪音，不是项目知识。
+That is process noise, not project knowledge.
 
-## 正例
+## Positive Example
 
 ```markdown
 ## Decisions
 
-- Context: 订单状态筛选需要复用现有分页接口，不能新增查询入口。
-- Decision: 在 `OrderQuery` 增加 nullable `status`，Mapper 只在非空时追加条件。
-- Consequences: 后续新增筛选条件应继续收敛在 `OrderQuery`，避免 Controller 直接拼 SQL。
+- Context: the order status filter must reuse the existing paginated endpoint; a new query entry is not allowed.
+- Decision: add a nullable `status` on `OrderQuery`; the Mapper only appends the condition when non-empty.
+- Consequences: future filter conditions should also converge in `OrderQuery` to prevent the Controller from building SQL directly.
 ```

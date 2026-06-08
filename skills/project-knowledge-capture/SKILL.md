@@ -19,4 +19,5 @@ Always load `prompts/capture.md`.
 - Create or update `docs/knowledge/index.md`.
 - Create `docs/knowledge/YYYY-MM-DD-<goal-slug>.md` for the task note.
 - Record durable knowledge only: context, entrypoints, decisions, constraints, tests, review conclusions.
+- Preserve CodeGraph provenance. If context was gathered by `rg`/file inspection (no CodeGraph), keep the exact line `CodeGraph unavailable; context was gathered by rg/file inspection.` in the CodeGraph Findings section, with the specific `rg` queries and files consulted on the next line.
 - Do not write secrets, tokens, customer data, production data, sensitive logs, or speculative claims.
