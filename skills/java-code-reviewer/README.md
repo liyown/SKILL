@@ -31,8 +31,7 @@ When findings exist, output only findings grouped by Critical / High / Medium / 
 ```text
 .
 ├── SKILL.md
-├── manifest.json
-├── agents/openai.yaml
+├── README.md
 ├── prompts/
 │   ├── reviewer.md
 │   ├── spring-reviewer.md
