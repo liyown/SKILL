@@ -7,6 +7,36 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.8 (2026-06-08)
+
+Tag: `v0.3.8`. Commits since v0.3.7: 2.
+
+### Changed
+
+- All 5 reviewer `SKILL.md` frontmatter `description` fields
+  extended with a router clause that names the severity tier:
+  "focusing on capital-loss, data-corruption, authorization-
+  bypass, and incident-causing defects" (and the frontend
+  equivalent "user-data-leak, XSS, authz-bypass" for
+  react-code-reviewer). The trigger list now also includes
+  "any review where a production incident is the worst case",
+  matching the router style documented in CONTRIBUTING.md
+  "What Makes A Great Skill" #1.
+
+### Verification
+
+- This release was cut with the new `--bump-mode minor` flag
+  in `scripts/release.sh` (v0.3.7 → v0.4.0; patch reset to 0).
+  The dry-run preview printed the would-be tag and confirmed
+  the patch component reset, before the script applied the
+  patch as v0.3.8.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.8 --skill java-code-reviewer
+```
+
 ## 0.3.7 (2026-06-08)
 
 Tag: `v0.3.7`. Commits since v0.3.6: 1.

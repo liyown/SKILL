@@ -6,21 +6,26 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.7** (2026-06-08). Pin to a specific tag with `#v0.3.7`:
+**v0.3.8** (2026-06-08). Pin to a specific tag with `#v0.3.8`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.7 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.8 --skill java-code-reviewer
 ```
 
-v0.3.6 → v0.3.7 adds `--bump-mode patch|minor|major` to
-`scripts/release.sh`. The patch mode is the default; minor bumps
-the minor component and resets patch to 0; major bumps major and
-resets both. `--bump X.Y.Z` still works and overrides the mode
-for non-monotonic cases. The complete release flag surface is
-now 7 flags. 1 commit since v0.3.6.
+v0.3.7 → v0.3.8 strengthens the `SKILL.md` frontmatter
+`description` field on all 5 reviewer skills. The router clause
+now ends with "focusing on capital-loss, data-corruption,
+authorization-bypass, and incident-causing defects" (and the
+frontend equivalent for react) so the consumer's match step
+also sees the severity tier — "any review where a production
+incident is the worst case" — not just the technology stack.
+2 commits since v0.3.7.
+
+This release also exercises the new `--bump-mode minor` flag in
+`scripts/release.sh` (v0.3.7 → v0.4.0; reset patch to 0).
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.3.6..v0.3.7` for the full
+and per-version highlights. Run `git log v0.3.7..v0.3.8` for the full
 diff since the last release.
 
 ## Install
