@@ -95,6 +95,11 @@ folder and reference it from `SKILL.md` to close a gap.
 > `concurrency-reviewer`) exist in multiple skills, each maintained for
 > its target language.
 
+> Each prompt in `prompts/` opens with a `> See also:` line listing the
+> most relevant sibling prompts in the same skill, so the matrix here
+> (skill × scenario index) and the per-prompt cross-references are
+> navigable from both sides.
+
 ## Layout
 
 ```text
