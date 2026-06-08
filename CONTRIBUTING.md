@@ -136,6 +136,111 @@ A skill is ready to merge when:
 - Cross-skill references resolve to skills that exist in this repository
 - New skills appear in root `README.md` and in any dependent skill's docs
 
+## What Makes A Great Skill
+
+The "Quality Bar" above is the floor. The ceiling is what separates
+a useful skill from one a consumer will reach for again. These
+guidelines are distilled from the patterns used by
+`anthropics/skills`, `vercel-labs/agent-skills`, and similar
+collections.
+
+### 1. Description is a router, not a description
+
+The `description` field is the only signal the consumer uses to
+decide whether to load the skill. It is **not** a marketing
+sentence about what the skill is — it is a router that says "load
+me when the user is doing X". A good description:
+
+- Starts with the user-facing trigger ("Review this Java PR for
+  production-risk issues…").
+- Lists the technologies, frameworks, or languages the skill
+  covers, separated by commas.
+- Includes the verbs users actually type: "review", "PR review",
+  "diff review", "bug-risk review", "release-blocking inspection".
+- Avoids internal jargon that an end user would never say.
+
+A bad description is "A skill for Java code review" — vague,
+trigger-free, and indistinguishable from a dozen other skills.
+
+### 2. SKILL.md body is a router, prompts/* are the substance
+
+The skill body is loaded every time the skill is invoked. Anything
+longer than ~80 lines is loaded into context repeatedly and
+costs the user tokens. Move the substance into `prompts/*.md`,
+one scenario per file, with progressive disclosure. A consumer
+reading the body should be able to decide which scenario files
+to load without scanning the whole skill.
+
+### 3. Bad and good are not optional
+
+A bad example without a good counterpart is half a lesson. The
+pair is the primary teaching asset. For every issue a reviewer
+prompt calls out, the consumer should be able to find a
+`bad-<file>` plus a `good-<file>` that demonstrates the minimum
+fix, with `Fix N:` annotations explaining each change.
+
+The two `bad-` / `good-` filenames must match stem-to-stem:
+
+```text
+examples/bad-wrapper-injection.java   examples/good-wrapper-injection.java
+examples/bad-goroutine-leak.go       examples/good-goroutine-leak.go
+```
+
+`scripts/check-examples.sh` enforces this; do not skip the
+good side.
+
+### 4. Prompts have fallback contracts
+
+Any prompt that depends on an external tool (CodeGraph, a
+specific linter, a package manager) must include an explicit
+fallback contract:
+
+- The trigger condition (how to detect unavailability).
+- The fallback order (which local means to use).
+- The exact fallback line the agent must emit in the final
+  report — verbatim, because downstream consumers parse it.
+- The stop-loss rule (when to stop trying).
+
+The "CodeGraph unavailable; context was gathered by rg/file
+inspection." line is the canonical example. Inventing your own
+phrasing here breaks downstream consumers that grep for the
+canonical string.
+
+### 5. Review output matches the contract
+
+`examples/review-output.md` is not aspirational — it is the
+contract. The format declared in `SKILL.md` (severity ladder,
+no-finding sentence, required sections) must match the example
+exactly. If a consumer loads only the example to calibrate, the
+real output must look like the example.
+
+### 6. Cross-references are explicit, not implicit
+
+When a prompt depends on or is closely related to another prompt
+in the same skill, the dependency must be visible at the top of
+the file as a `> See also: prompts/x.md, prompts/y.md` blockquote.
+Consumers should not have to read `SKILL.md` to re-discover the
+Required/Optional Loading structure every time they load a
+prompt.
+
+### 7. Install is friction-free
+
+A new consumer should be able to install a single skill with one
+`npx skills add owner/repo --skill <name>` command. The root
+`README.md` must list the install command for every skill in the
+"Included Skills" section, not just the top three. Skills with
+unsatisfied peer dependencies (e.g. `goal-driven-development`
+needs the reviewers) must spell out the combined install command
+in "Cross-Skill Dependencies".
+
+### 8. Release is a single command
+
+Releases should be reproducible from the current state of `main`.
+This repo uses `scripts/release.sh --yes` to bump the tag, push,
+and let CI do the rest. Do not hand-edit tags; do not push tags
+without the script unless the script is broken. If the script is
+broken, fix the script first, then release.
+
 ## License
 
 By contributing, you agree your contributions are licensed under the
