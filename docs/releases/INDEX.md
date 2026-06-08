@@ -6,10 +6,10 @@ the GitHub release page, the in-repo mirror, and the cumulative
 changelog.
 
 ## Releases (newest first)
-| `v0.3.6` | 2026-06-08 | 3 since v0.3.5 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.6> | [v0.3.6.md](v0.3.6.md) |
 
 | Tag | Date | Commits | GitHub Release | In-repo mirror |
 | --- | --- | --- | --- | --- |
+| `v0.3.6` | 2026-06-08 | 3 since v0.3.5 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.6> | [v0.3.6.md](v0.3.6.md) |
 | `v0.3.5` | 2026-06-08 | 2 since v0.3.4 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.5> | [v0.3.5.md](v0.3.5.md) |
 | `v0.3.4` | 2026-06-08 | 4 since v0.3.3 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.4> | [v0.3.4.md](v0.3.4.md) |
 | `v0.3.3` | 2026-06-08 | 6 since v0.3.2 | <https://github.com/liyown/skills-registry/releases/tag/v0.3.3> | [v0.3.3.md](v0.3.3.md) |
