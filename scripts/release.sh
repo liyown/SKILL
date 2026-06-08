@@ -13,6 +13,14 @@
 #   6. push the tag and the current branch to origin
 #   7. print the new tag so the caller can paste it into the release notes
 #
+# Flags:
+#   --yes  / -y    skip the interactive confirmation prompt
+#   --dry-run      print every action that would be taken, run validate,
+#                  but do NOT create the tag, do NOT push
+#   --bump X.Y.Z   override the auto-bumped version (still validated to be
+#                  > the current tag's version)
+#   --help / -h    print this help and exit
+#
 # The script does NOT bump any version file (this repo has no package.json
 # or similar); the source of truth is the git tag. The README's
 # "Latest Release" section must already be in sync with the tag — the
@@ -23,15 +31,29 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$ROOT"
 
-if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+print_help() {
     sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+    print_help
     exit 0
 fi
 
 YES=""
-if [ "${1:-}" = "--yes" ] || [ "${1:-}" = "-y" ]; then
-    YES=1
-fi
+DRY_RUN=""
+BUMP_OVERRIDE=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --yes|-y) YES=1 ;;
+        --dry-run) DRY_RUN=1 ;;
+        --bump) BUMP_OVERRIDE="$2"; shift ;;
+        --bump=*) BUMP_OVERRIDE="${1#--bump=}" ;;
+        --help|-h) print_help; exit 0 ;;
+        *) echo "unknown flag: $1" >&2; exit 1 ;;
+    esac
+    shift
+done
 
 # 1. current state
 if [ -n "$(git status --porcelain)" ]; then
@@ -54,13 +76,28 @@ case "$COMMITS_SINCE" in
         exit 0
         ;;
     *)
-        # bump patch: vX.Y.Z -> vX.(Y).(Z+1)
-        base=${CURRENT_TAG#v}
-        major=$(echo "$base" | cut -d. -f1)
-        minor=$(echo "$base" | cut -d. -f2)
-        patch=$(echo "$base" | cut -d. -f3)
-        next_patch=$((patch + 1))
-        NEXT_TAG="v${major}.${minor}.${next_patch}"
+        if [ -n "$BUMP_OVERRIDE" ]; then
+            NEXT_TAG="v$BUMP_OVERRIDE"
+            # sanity: must be greater than current tag (lexical compare is
+            # good enough for X.Y.Z)
+            case "$NEXT_TAG" in
+                "$CURRENT_TAG") echo "FAIL: --bump $BUMP_OVERRIDE equals current tag $CURRENT_TAG" >&2; exit 1 ;;
+                v*) ;;
+                *) echo "FAIL: --bump must look like vX.Y.Z (got $BUMP_OVERRIDE)" >&2; exit 1 ;;
+            esac
+            if [ "$NEXT_TAG" \< "$CURRENT_TAG" ] || [ "$NEXT_TAG" = "$CURRENT_TAG" ]; then
+                echo "FAIL: --bump $NEXT_TAG must be greater than current tag $CURRENT_TAG" >&2
+                exit 1
+            fi
+        else
+            # bump patch: vX.Y.Z -> vX.(Y).(Z+1)
+            base=${CURRENT_TAG#v}
+            major=$(echo "$base" | cut -d. -f1)
+            minor=$(echo "$base" | cut -d. -f2)
+            patch=$(echo "$base" | cut -d. -f3)
+            next_patch=$((patch + 1))
+            NEXT_TAG="v${major}.${minor}.${next_patch}"
+        fi
         ;;
 esac
 
@@ -72,6 +109,17 @@ echo
 echo "about to tag $NEXT_TAG at $HEAD_SHA"
 echo "  message: \"Release $NEXT_TAG (auto-generated; $COMMITS_SINCE commits since $CURRENT_TAG)\""
 echo
+
+if [ -n "$DRY_RUN" ]; then
+    echo "DRY RUN: would run:"
+    echo "  git tag -a $NEXT_TAG -m \"Release $NEXT_TAG (auto-generated; $COMMITS_SINCE commits since $CURRENT_TAG)\""
+    echo "  git push origin HEAD"
+    echo "  git push origin $NEXT_TAG"
+    echo
+    echo "DRY RUN: no tag created, no push performed"
+    exit 0
+fi
+
 if [ -z "$YES" ]; then
     printf "continue? [y/N] "
     read -r ans
