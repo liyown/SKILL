@@ -6,19 +6,22 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.1** (2026-06-08). Pin to a specific tag with `#v0.3.1`:
+**v0.3.2** (2026-06-08). Pin to a specific tag with `#v0.3.2`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.1 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.2 --skill java-code-reviewer
 ```
 
-v0.3.0 → v0.3.1 adds `scripts/release.sh` (tag-driven release flow) and
-a footer that links the Reviewer Coverage Matrix to per-prompt See also
-lines. 3 commits since v0.3.0.
+v0.3.1 → v0.3.2 closes the react-code-reviewer frontend coverage gap.
+6 new scenario prompts (testing, forms, state, a11y, error-boundary,
+bundle) bring react to 10 prompts — parity with the backend
+reviewers. 6 paired bad/good examples teach the most common frontend
+production bugs. SKILL.md frontmatter updated and the Reviewer
+Coverage Matrix expanded to 11 rows. 7 commits since v0.3.1.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.2.0..v0.3.1` for the full
-diff since the last registry release.
+and per-version highlights. Run `git log v0.3.1..v0.3.2` for the full
+diff since the last release.
 
 ## Install
 

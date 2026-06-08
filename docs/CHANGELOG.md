@@ -7,6 +7,51 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.2 (2026-06-08)
+
+Tag: `v0.3.2`. Commits since v0.3.1: 7.
+
+### Added
+
+- `react-code-reviewer` expanded from 4 to 10 scenario prompts, closing
+  the frontend coverage gap relative to the backend reviewers:
+  - `testing-reviewer.md` — Jest, Vitest, React Testing Library,
+    Playwright, Cypress; `act()` wrapping, mock scoping, behaviour
+    vs implementation assertions.
+  - `forms-reviewer.md` — react-hook-form, Formik, Zod, server
+    actions; submit disable, double-submit, schema-driven errors.
+  - `state-reviewer.md` — Redux Toolkit, Zustand, Jotai, Context;
+    selector memoisation, store splitting, SSR hydration.
+  - `a11y-reviewer.md` — keyboard, screen reader, ARIA, focus
+    management, contrast, live regions, reduced motion.
+  - `error-boundary-reviewer.md` — top-level vs route-level
+    boundaries, event-handler async errors, fallback UX, log
+    forwarding.
+  - `bundle-reviewer.md` — tree-shaking, dynamic imports, route-
+    level code splitting, icon imports, barrel files.
+- 6 paired `bad-*` / `good-*` example `.tsx` files for the new
+  react scenarios, with `Fix N:` annotations matching the rest of
+  the collection.
+- `docs:` "What Makes A Great Skill" section in `CONTRIBUTING.md`
+  capturing the patterns used by `anthropics/skills` and
+  `vercel-labs/agent-skills` (description as router, progressive
+  disclosure, mandatory bad/good pairs, fallback contracts, etc.).
+
+### Changed
+
+- `react-code-reviewer/SKILL.md` frontmatter `description` now lists
+  the additional scenario keywords so the consumer routes correctly.
+- `docs/CHANGELOG.md` re-created (deleted during the shadcn drop)
+  with the cumulative v0.2.0 → v0.3.2 history.
+- README "Reviewer Coverage Matrix" expanded from 7 to 11 rows to
+  host the new react scenarios.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.2 --skill java-code-reviewer
+```
+
 ## 0.3.1 (2026-06-08)
 
 Tag: `v0.3.1`. Commits since v0.3.0: 4.
