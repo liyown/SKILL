@@ -1,37 +1,40 @@
 # Java Concurrency Reviewer Prompt
 
-用于并发、幂等、锁、线程池、缓存竞争和异步任务审查。
+> See also: prompts/spring-reviewer.md, redis-kafka-reviewer.md
 
-## 必查风险
 
-- 重复提交、重复消费、重复扣减、重复写入是否有唯一约束、幂等键、状态条件或版本号保护。
-- 先查后改是否存在竞态，是否需要条件更新或乐观锁。
-- 分布式锁 key 是否包含业务唯一维度，是否有过短 TTL、误释放、不可重入或锁范围错误。
-- static 可变对象、单例 Bean 字段、非线程安全集合是否被多线程共享。
-- ThreadLocal 是否在 finally 中 remove，线程池复用是否会串用户/租户上下文。
-- 异步任务异常是否丢失，线程池队列、拒绝策略、超时是否可能拖垮服务。
-- 缓存更新是否存在并发覆盖、双删失败、缓存和 DB 不一致。
+For concurrency, idempotency, locks, thread pools, cache races, and async tasks.
 
-## 输出要求
+## Required Checks
 
-并发问题必须给出两个或多个请求/消息交错执行的触发顺序。
+- Whether duplicate submit, duplicate consumption, duplicate deduction, or duplicate write has a unique constraint, idempotency key, status condition, or version protection.
+- Whether read-then-modify has a race that requires conditional update or optimistic lock.
+- Whether the distributed lock key includes the business-unique dimension, has a sane TTL, renewal strategy, fail-safe release, and is not overly scoped.
+- Whether static mutable objects, singleton Bean fields, or non-thread-safe collections are shared across threads.
+- Whether ThreadLocal is removed in `finally` so thread pool reuse does not leak user/tenant context.
+- Whether async task exceptions are lost, and whether the thread pool queue, rejection policy, and timeout can take down the service.
+- Whether cache updates have concurrent overwrite, double-delete failure, or cache/DB inconsistency.
 
-## 正例
+## Output Requirements
+
+Concurrency issues must give the interleaved execution order of two or more requests or messages that produce the failure.
+
+## Positive Example
 
 ```markdown
 # Critical
 
-## 1. 支付状态先查后改导致并发重复扣款
+## 1. Read-then-modify on payment status leads to concurrent double-charge
 
-位置：
+Location:
 `PaymentService#pay`
 
-问题：
-两个请求同时读取到 `UNPAID` 后都会执行扣款，再分别更新为 `PAID`。更新语句没有旧状态条件或版本号。
+Problem:
+Two requests both read `UNPAID` and execute the deduction, then each updates to `PAID`. The update statement has no old-status condition or version.
 
-影响：
-同一订单可能被重复扣款，属于资损风险。
+Impact:
+The same order can be charged multiple times; this is a capital-loss risk.
 
-建议：
-使用 `where id = ? and status = 'UNPAID'` 的条件更新抢占支付状态，或使用唯一支付流水实现幂等。
+Suggestion:
+Use a conditional update such as `where id = ? and status = 'UNPAID'` to claim the payment state, or rely on a unique payment-flow row for idempotency.
 ```

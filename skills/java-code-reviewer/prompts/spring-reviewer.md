@@ -1,37 +1,40 @@
 # Spring Reviewer Prompt
 
-用于 Spring Boot / Spring Cloud / Spring Framework 代码审查。必须基于实际调用路径判断，不要只因为看见注解就输出问题。
+> See also: prompts/concurrency-reviewer.md, security-reviewer.md
 
-## 必查风险
 
-- `@Transactional` 是否通过 Spring 代理进入；同类内部调用、private/final 方法、非 Bean 实例、`@PostConstruct` 中调用都可能失效。
-- checked exception 默认不回滚；业务异常被 catch 后未重新抛出或未 `setRollbackOnly` 会提交脏数据。
-- 事务范围是否包含 RPC/HTTP/Feign/MQ/file IO/大批量处理，导致连接长时间占用或外部副作用无法回滚。
-- `@Async` / `@Scheduled` / `@Cacheable` / `@Transactional` 是否被自调用绕过代理。
-- Controller 是否缺少 `@Valid` / `@Validated`，是否信任请求传入的用户 ID、租户 ID、角色、状态。
-- Feign / RestTemplate / WebClient 是否缺超时、错误映射、幂等重试边界。
-- 全局异常处理是否把失败包装成成功码，或泄露内部堆栈、SQL、token。
+For Spring Boot / Spring Cloud / Spring Framework code review. Every finding must be grounded in an actual call path, not just the presence of an annotation.
 
-## 输出要求
+## Required Checks
 
-每个问题必须说明代理/事务/异常路径为何在运行时生效或失效。无法确认调用是否走代理时标注 `需要结合上下文确认`。
+- Whether `@Transactional` is reached through the Spring proxy; same-class internal calls, private/final methods, non-Bean instances, and `@PostConstruct` invocations can all break the proxy chain.
+- Checked exceptions do not roll back by default; a business exception that is caught and not re-thrown (or does not set `setRollbackOnly`) commits dirty data.
+- Whether the transaction scope contains RPC/HTTP/Feign/MQ/file IO/batch processing, which holds the connection for too long and makes the external side-effect un-rollable.
+- Whether `@Async` / `@Scheduled` / `@Cacheable` / `@Transactional` are bypassed by self-invocation.
+- Whether the Controller is missing `@Valid` / `@Validated`, and whether it trusts user-supplied userId / tenantId / role / status.
+- Whether Feign / RestTemplate / WebClient is missing timeout, error mapping, or idempotent retry boundaries.
+- Whether the global exception handler wraps failures as success codes, or leaks stack / SQL / token / internal config to the response.
 
-## 正例
+## Output Requirements
+
+Each issue must explain why the proxy/transaction/exception path is or is not effective at runtime. Mark with `需要结合上下文确认` when it is not clear whether the call goes through the proxy.
+
+## Positive Example
 
 ```markdown
 # High
 
-## 1. 同类内部调用导致事务注解不生效
+## 1. Same-class internal call breaks the transaction annotation
 
-位置：
+Location:
 `OrderService#create`
 
-问题：
-`create()` 直接调用同类 `saveOrder()`，而 `saveOrder()` 上的 `@Transactional` 只有通过 Spring 代理调用才会生效。当前路径不会开启事务。
+Problem:
+`create()` directly calls `saveOrder()` in the same class, and `@Transactional` on `saveOrder()` only takes effect when the call is made through the Spring proxy. The current path does not start a transaction.
 
-影响：
-订单写入成功后库存扣减失败时无法整体回滚，可能出现订单和库存不一致。
+Impact:
+When the order insert succeeds but inventory deduction fails, there is no atomic rollback, and order and inventory can drift.
 
-建议：
-把事务边界放到外层公开方法，或将被调用方法移动到独立 Bean 后通过代理调用。
+Suggestion:
+Move the transactional boundary to the outer public method, or move the called method to a separate Bean and call it through the proxy.
 ```

@@ -1,38 +1,41 @@
 # Redis / Kafka Reviewer Prompt
 
-用于 Redis 缓存、分布式锁、Kafka 消费/生产、最终一致性审查。
+> See also: prompts/spring-reviewer.md, mybatis-reviewer.md, concurrency-reviewer.md
 
-## 必查风险
 
-- Redis key 是否缺租户/用户/业务维度，导致串数据或误删。
-- 缓存穿透、击穿、雪崩是否有空值缓存、互斥/逻辑过期、随机 TTL。
-- 缓存更新和 DB 写入顺序是否会造成脏读、旧值回填、并发覆盖。
-- 分布式锁是否有唯一 value 释放、合理 TTL、续约策略和失败降级。
-- Kafka 消费是否幂等，重复投递、重平衡、手动提交 offset 失败是否安全。
-- 消息顺序是否依赖 partition key，乱序是否会破坏状态机。
-- 生产消息和 DB 事务是否需要 outbox、事务消息、补偿或重试表。
-- retry / DLQ 是否可能无限放大故障，是否保留足够排障上下文。
+For Redis cache, distributed lock, Kafka consume/produce, and eventual-consistency review.
 
-## 输出要求
+## Required Checks
 
-说明缓存/消息在失败、重试、并发、重平衡下的具体错误状态。
+- Whether the Redis key is missing the tenant/user/business dimension, leading to cross-data or accidental deletion.
+- Whether cache penetration, breakdown, or avalanche has empty-value cache, mutex/logical expiry, or random TTL.
+- Whether the order of cache update and DB write causes dirty read, stale value backfill, or concurrent overwrite.
+- Whether the distributed lock has a unique value release, sensible TTL, renewal strategy, and fail-safe degradation.
+- Whether Kafka consumption is idempotent, and whether duplicate delivery, rebalance, or manual offset commit failure is safe.
+- Whether message order depends on partition key, and whether out-of-order would break the state machine.
+- Whether producing a message and the DB transaction need outbox, transactional message, or compensation/retry table.
+- Whether retry / DLQ can amplify failures infinitely, and whether enough context is preserved for triage.
 
-## 正例
+## Output Requirements
+
+Describe the specific error state of cache/message under failure, retry, concurrency, and rebalance.
+
+## Positive Example
 
 ```markdown
 # High
 
-## 1. Kafka 消费缺少幂等保护导致重复发货
+## 1. Kafka consumption missing idempotency protection causes duplicate fulfilment
 
-位置：
+Location:
 `ShipmentConsumer#onMessage`
 
-问题：
-消费者收到订单已支付消息后直接创建发货单，未以消息 ID 或订单 ID 建唯一约束。Kafka 重试或 rebalance 后可能重复投递同一消息。
+Problem:
+The consumer creates a shipment on receipt of an order-paid event without a unique constraint on the message id or order id. Kafka retries or rebalance can re-deliver the same message.
 
-影响：
-同一订单可能生成多张发货单，造成重复履约。
+Impact:
+The same order can produce multiple shipments, leading to duplicate fulfilment.
 
-建议：
-使用订单 ID 建唯一索引或消费幂等表，已处理消息直接跳过。
+Suggestion:
+Add a unique index on order id, or build a consume-idempotency table and skip already-processed messages.
 ```

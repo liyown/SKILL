@@ -35,3 +35,9 @@ Load additional prompts only when relevant:
 ```
 
 Use the severity and output contract from `prompts/reviewer.md`.
+
+## Examples
+
+Each bad example has a matching `good-<file>` in this same `examples/`
+directory that shows the minimal fix for every Critical/High finding. Read
+both side by side when triaging a real diff.

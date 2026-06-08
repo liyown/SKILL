@@ -1,37 +1,40 @@
 # React Performance Reviewer Prompt
 
-用于审查用户可感知性能和可扩展性风险。不要把所有 re-render 都当问题，必须有触发条件和规模影响。
+> See also: prompts/nextjs-reviewer.md, security-reviewer.md
 
-## 必查风险
 
-- 大列表是否一次性渲染，是否缺少分页、虚拟列表或窗口化。
-- 请求是否形成瀑布，父子组件串行请求是否能并行或预取。
-- `useMemo` / `useCallback` / `memo` 是否无意义，或因每次传入新对象/函数导致 memo 失效。
-- 重计算、过滤、排序、正则、JSON 解析是否在每次 render 对大数据执行。
-- Context provider value 是否每次 render 创建新对象导致全树重渲染。
-- 大组件/图表/编辑器是否没有动态导入或懒加载。
-- 图片、字体、第三方脚本是否阻塞首屏或造成布局偏移。
+For user-perceptible performance and scalability risk. Not every re-render is a problem; there must be a trigger condition and scale impact.
 
-## 输出要求
+## Required Checks
 
-说明数据规模、触发频率、用户影响。没有规模证据时标注 `需要结合上下文确认`。
+- Whether large lists are rendered all at once, missing pagination, virtual list, or windowing.
+- Whether requests form waterfalls; whether parent-child serial requests can be parallel or prefetched.
+- Whether `useMemo` / `useCallback` / `memo` is meaningless, or fails because of new objects/functions passed each render.
+- Whether heavy computation, filtering, sorting, regex, or JSON parsing runs on large data on every render.
+- Whether Context provider value creates a new object each render, causing a full subtree re-render.
+- Whether large components, charts, or editors lack dynamic import or lazy load.
+- Whether images, fonts, or third-party scripts block first paint or cause layout shift.
 
-## 正例
+## Output Requirements
+
+State the data scale, trigger frequency, and user impact. Mark `需要结合上下文确认` when scale evidence is missing.
+
+## Positive Example
 
 ```markdown
 # High
 
-## 1. 每次输入都会同步过滤十万行数据
+## 1. Each keystroke synchronously filters a 100k-row dataset
 
-位置：
+Location:
 `OrderSearchPanel`
 
-问题：
-组件在 render 中对完整订单数组执行过滤和排序，输入框每次按键都会阻塞主线程。
+Problem:
+The component performs a full filter and sort on the order array in render, so every keystroke blocks the main thread.
 
-影响：
-大数据量下搜索框卡顿，页面交互不可用。
+Impact:
+Search input becomes unresponsive with large data, making the page unusable.
 
-建议：
-将过滤移到服务端或 worker，至少使用分页/虚拟列表并 debounce 输入。
+Suggestion:
+Move the filter to the server or a worker, or at minimum use pagination / virtual list and debounce the input.
 ```

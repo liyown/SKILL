@@ -1,38 +1,41 @@
 # Java Security Reviewer Prompt
 
-用于 Java 后端安全审查。安全问题必须给攻击路径，不输出没有路径的泛化提醒。
+> See also: prompts/spring-reviewer.md, mybatis-reviewer.md, redis-kafka-reviewer.md
 
-## 必查风险
 
-- 用户 ID、租户 ID、组织 ID、角色、资源归属是否来自服务端可信上下文，而不是直接信任请求参数。
-- 查询、更新、删除是否遗漏租户隔离、owner 条件、数据权限范围。
-- SQL、命令、路径、URL、JSONPath、SpEL、模板表达式是否拼接不可信输入。
-- 文件上传/下载/解压是否有路径穿越、覆盖写、类型绕过、大小绕过、临时文件泄露。
-- SSRF 是否限制协议、内网地址、重定向、DNS rebinding。
-- 日志、异常、审计事件是否输出密码、token、secret、cookie、身份证、手机号、银行卡。
-- 反序列化、动态类加载、脚本执行、表达式解析是否暴露给外部输入。
-- OAuth callback、redirectUrl、CORS、Cookie、CSRF 配置是否过宽。
+For Java backend security review. Security issues must include a concrete attack path; do not output generic security reminders without a path.
 
-## 输出要求
+## Required Checks
 
-说明攻击者输入、代码如何使用该输入、最终能造成什么后果。上下文不足时标注 `需要结合上下文确认`。
+- Whether user id, tenant id, organization id, role, and resource ownership come from server-side trusted context, not directly from request parameters.
+- Whether query, update, and delete are missing tenant isolation, owner condition, or data-scope filters.
+- Whether SQL, shell command, file path, URL, JSONPath, SpEL, or template expression concatenates untrusted input.
+- Whether file upload/download/unzip has path traversal, write-overwrite, type/size bypass, or temp-file leakage.
+- Whether SSRF restricts protocols, internal addresses, redirect, and DNS rebinding.
+- Whether log output, exception output, and audit events leak password, token, secret, cookie, national id, phone number, or bank card.
+- Whether deserialization, dynamic class loading, script execution, or expression parsing is exposed to external input.
+- Whether OAuth callback, redirectUrl, CORS, Cookie, and CSRF config is too permissive.
 
-## 正例
+## Output Requirements
+
+State the attacker input, how the code uses that input, and the final capability granted. Mark with `需要结合上下文确认` when context is insufficient.
+
+## Positive Example
 
 ```markdown
 # Critical
 
-## 1. 下载接口存在路径穿越
+## 1. Path traversal in download endpoint
 
-位置：
+Location:
 `FileController#download`
 
-问题：
-接口把请求参数 `path` 直接拼到基础目录后读取文件，没有 normalize 后校验仍在允许目录内。
+Problem:
+The endpoint takes the request parameter `path` and concatenates it under the base directory without normalizing or verifying the result is still under the allowed directory.
 
-影响：
-攻击者可传入 `../../application.yml` 读取配置文件，可能泄露数据库密码或 token。
+Impact:
+An attacker can pass `../../application.yml` to read the configuration file, potentially leaking database passwords or tokens.
 
-建议：
-对路径做 normalize，并校验解析后的路径必须以允许目录为前缀。
+Suggestion:
+Normalize the path with `Path.normalize()` and assert that the resolved path starts with the allowed directory prefix; otherwise return 400.
 ```
