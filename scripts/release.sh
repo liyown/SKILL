@@ -5,13 +5,14 @@
 #   1. read the current version from `git describe --tags` (vX.Y.Z-N-gHASH)
 #   2. derive the next version from the most recent annotated tag:
 #        - if the working tree is dirty: fail
-#        - if there are commits since the tag: bump patch (v0.3.0 -> v0.3.1)
-#        - else: the tag already points at HEAD, no-op
+#        - if there are no commits since the tag: HEAD is already tagged
+#        - else: bump per `--bump-mode` (default patch, or `--minor` /
+#               `--major` / `--bump X.Y.Z`)
 #   3. run ./scripts/validate.sh; abort on failure
 #   4. ask for confirmation (unless --yes is passed)
 #   5. create an annotated tag `v<version>` at HEAD
-#   6. push the tag and the current branch to origin
-#   7. print the new tag so the caller can paste it into the release notes
+#   6. push the tag and the current branch to origin (unless --no-publish)
+#   7. print the new tag and the gh release create command
 #
 # Flags:
 #   --yes  / -y    skip the interactive confirmation prompt
@@ -21,8 +22,11 @@
 #                        script does not publish to GitHub itself; pipe the file
 #                        to `gh release create --notes-file` yourself.
 #   --no-publish      do not push the tag or branch to origin (local-only release)
-#   --bump X.Y.Z   override the auto-bumped version (still validated to be
-#                  > the current tag's version)
+#   --bump-mode patch|minor|major
+#                        default patch. minor => v0.3.6 -> v0.4.0
+#                        major => v0.3.6 -> v1.0.0
+#   --bump X.Y.Z   override the auto-bumped version entirely (validated to
+#                  be > the current tag's version)
 #   --help / -h    print this help and exit
 #
 # The script does NOT bump any version file (this repo has no package.json
@@ -47,6 +51,7 @@ fi
 YES=""
 DRY_RUN=""
 BUMP_OVERRIDE=""
+BUMP_MODE="patch"
 NOTES_FROM=""
 NO_PUBLISH=""
 while [ $# -gt 0 ]; do
@@ -55,6 +60,8 @@ while [ $# -gt 0 ]; do
         --dry-run) DRY_RUN=1 ;;
         --bump) BUMP_OVERRIDE="$2"; shift ;;
         --bump=*) BUMP_OVERRIDE="${1#--bump=}" ;;
+        --bump-mode) BUMP_MODE="$2"; shift ;;
+        --bump-mode=*) BUMP_MODE="${1#--bump-mode=}" ;;
         --notes-from) NOTES_FROM="$2"; shift ;;
         --notes-from=*) NOTES_FROM="${1#--notes-from=}" ;;
         --no-publish) NO_PUBLISH=1 ;;
@@ -63,6 +70,17 @@ while [ $# -gt 0 ]; do
     esac
     shift
 done
+
+# Validate bump-mode
+case "$BUMP_MODE" in
+    patch|minor|major) ;;
+    *) echo "FAIL: --bump-mode must be patch, minor, or major (got $BUMP_MODE)" >&2; exit 1 ;;
+esac
+
+# If --bump X.Y.Z is set, it overrides --bump-mode entirely
+if [ -n "$BUMP_OVERRIDE" ]; then
+    BUMP_MODE="explicit"
+fi
 
 # 1. current state
 if [ -n "$(git status --porcelain)" ]; then
@@ -77,6 +95,7 @@ COMMITS_SINCE=$(git rev-list --count "${CURRENT_TAG}..HEAD")
 echo "current tag : $CURRENT_TAG"
 echo "HEAD        : $HEAD_SHA"
 echo "commits since: $COMMITS_SINCE"
+echo "bump mode   : $BUMP_MODE"
 
 # 2. derive next version
 case "$COMMITS_SINCE" in
@@ -87,8 +106,6 @@ case "$COMMITS_SINCE" in
     *)
         if [ -n "$BUMP_OVERRIDE" ]; then
             NEXT_TAG="v$BUMP_OVERRIDE"
-            # sanity: must be greater than current tag (lexical compare is
-            # good enough for X.Y.Z)
             case "$NEXT_TAG" in
                 "$CURRENT_TAG") echo "FAIL: --bump $BUMP_OVERRIDE equals current tag $CURRENT_TAG" >&2; exit 1 ;;
                 v*) ;;
@@ -99,13 +116,24 @@ case "$COMMITS_SINCE" in
                 exit 1
             fi
         else
-            # bump patch: vX.Y.Z -> vX.(Y).(Z+1)
             base=${CURRENT_TAG#v}
             major=$(echo "$base" | cut -d. -f1)
             minor=$(echo "$base" | cut -d. -f2)
             patch=$(echo "$base" | cut -d. -f3)
-            next_patch=$((patch + 1))
-            NEXT_TAG="v${major}.${minor}.${next_patch}"
+            case "$BUMP_MODE" in
+                patch)
+                    next_patch=$((patch + 1))
+                    NEXT_TAG="v${major}.${minor}.${next_patch}"
+                    ;;
+                minor)
+                    next_minor=$((minor + 1))
+                    NEXT_TAG="v${major}.${next_minor}.0"
+                    ;;
+                major)
+                    next_major=$((major + 1))
+                    NEXT_TAG="v${next_major}.0.0"
+                    ;;
+            esac
         fi
         ;;
 esac
@@ -115,7 +143,7 @@ esac
 
 # 4. confirm
 echo
-echo "about to tag $NEXT_TAG at $HEAD_SHA"
+echo "about to tag $NEXT_TAG at $HEAD_SHA (mode: $BUMP_MODE)"
 echo "  message: \"Release $NEXT_TAG (auto-generated; $COMMITS_SINCE commits since $CURRENT_TAG)\""
 echo
 
