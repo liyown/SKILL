@@ -1,114 +1,149 @@
 # Skills Registry
 
-This repository is a shadcn-compatible source registry for reusable AI skills. It remains a general skill registry, not a single-flow repository.
+A collection of reusable AI skills installed with the [skills.sh](https://skills.sh)
+CLI (`npx skills`). Each skill lives in its own directory under `skills/` and
+is discoverable by name.
 
-## Install Items
-
-List available skills:
-
-```sh
-pnpm dlx shadcn@latest list liyown/skills-registry
-```
-
-View an item before installing:
+## Install
 
 ```sh
-pnpm dlx shadcn@latest view liyown/skills-registry/java-code-reviewer
-pnpm dlx shadcn@latest view liyown/skills-registry/react-code-reviewer
-pnpm dlx shadcn@latest view liyown/skills-registry/goal-driven-development
-pnpm dlx shadcn@latest view liyown/skills-registry/project-knowledge-capture
+# install one or more skills
+npx skills add liyown/skills-registry --skill java-code-reviewer
+npx skills add liyown/skills-registry --skill react-code-reviewer
+npx skills add liyown/skills-registry --skill go-code-reviewer
+npx skills add liyown/skills-registry --skill python-code-reviewer
+npx skills add liyown/skills-registry --skill node-code-reviewer
+npx skills add liyown/skills-registry --skill goal-driven-development
+npx skills add liyown/skills-registry --skill project-knowledge-capture
+
+# install everything
+npx skills add liyown/skills-registry
 ```
 
-Install the goal-driven development workflow and its dependencies:
+`npx skills` reads the `SKILL.md` frontmatter in each subdirectory and copies
+the whole skill folder into the consumer's local skills directory
+(`~/.claude/skills/<name>/` for Claude Code, etc.).
 
-```sh
-pnpm dlx shadcn@latest add liyown/skills-registry/goal-driven-development
-```
+## Cross-Skill Dependencies
 
-Install individual skills:
+`npx skills` does not auto-install dependencies referenced inside a skill's
+body. When a skill says "invoke `<other-skill>` for X", the consumer must
+install that other skill separately. Concrete cases in this collection:
 
-```sh
-pnpm dlx shadcn@latest add liyown/skills-registry/java-code-reviewer
-pnpm dlx shadcn@latest add liyown/skills-registry/react-code-reviewer
-pnpm dlx shadcn@latest add liyown/skills-registry/project-knowledge-capture
-```
+- `goal-driven-development` references `java-code-reviewer`,
+  `react-code-reviewer`, `go-code-reviewer`, `python-code-reviewer`,
+  `node-code-reviewer`, and `project-knowledge-capture` as runtime
+  helpers. Install all six alongside it:
 
-Pin to the v0.2.0 registry release:
+  ```sh
+  npx skills add liyown/skills-registry \
+    --skill goal-driven-development \
+    --skill java-code-reviewer \
+    --skill react-code-reviewer \
+    --skill go-code-reviewer \
+    --skill python-code-reviewer \
+    --skill node-code-reviewer \
+    --skill project-knowledge-capture
+  ```
 
-```sh
-pnpm dlx shadcn@latest add liyown/skills-registry/goal-driven-development#v0.2.0
-```
-
-Skills install under:
-
-```text
-.skills/<skill-name>/
-```
+  Install can be repeated; existing skills are updated in place.
 
 ## Included Skills
 
-- `java-code-reviewer`: evidence-driven Java backend production-risk review.
-- `react-code-reviewer`: React / TypeScript / Next.js frontend production-risk review.
-- `goal-driven-development`: CodeGraph-assisted implementation workflow for existing specs/goals.
-- `project-knowledge-capture`: durable project knowledge capture into `docs/knowledge/`.
+- `java-code-reviewer` — evidence-driven Java backend production-risk review.
+- `react-code-reviewer` — React / TypeScript / Next.js frontend production-risk review.
+- `go-code-reviewer` — Go backend production-risk review (goroutines, context, errors, sqlx, gRPC).
+- `python-code-reviewer` — Python backend production-risk review (asyncio, error handling, SQLAlchemy/Django, security).
+- `node-code-reviewer` — Node.js backend production-risk review (async, error handling, Prisma, Express/Fastify, security).
+- `goal-driven-development` — CodeGraph-assisted implementation workflow for existing specs/goals.
+- `project-knowledge-capture` — durable project knowledge capture into `docs/knowledge/`.
 
-## Registry Layout
+## Reviewer Coverage Matrix
+
+Each reviewer skill loads `prompts/reviewer.md` (core protocol) and one or
+more scenario-specific prompts. The matrix shows which scenarios each
+reviewer covers; cell entries are the scenario prompt file names.
+
+| Scenario | java | react | go | python | node |
+| --- | --- | --- | --- | --- | --- |
+| Framework / runtime | `spring-reviewer.md` | `nextjs-reviewer.md` | `rpc-reviewer.md` | `web-reviewer.md` | `http-reviewer.md` |
+| Concurrency / async | `concurrency-reviewer.md`, `reactor-reviewer.md` | — | `concurrency-reviewer.md` | `async-reviewer.md` | `async-reviewer.md` |
+| Error handling | — | — | `error-reviewer.md` | `error-reviewer.md` | `error-reviewer.md` |
+| Database / ORM | `mybatis-reviewer.md` | — | `sql-reviewer.md` | `sql-reviewer.md` | `sql-reviewer.md` |
+| Caching / messaging | `redis-kafka-reviewer.md` | — | — | — | — |
+| Security | `security-reviewer.md` | `security-reviewer.md` | `security-reviewer.md` | `security-reviewer.md` | `security-reviewer.md` |
+| Performance | — | `performance-reviewer.md` | — | — | — |
+
+A `—` cell means the reviewer has no dedicated scenario prompt for that
+category. Add a `<scenario>-reviewer.md` under the relevant `prompts/`
+folder and reference it from `SKILL.md` to close a gap.
+
+> Cell entries are file names inside the row's `prompts/` directory; some
+> scenario names (`security-reviewer`, `sql-reviewer`, `error-reviewer`,
+> `concurrency-reviewer`) exist in multiple skills, each maintained for
+> its target language.
+
+## Layout
 
 ```text
 .
-├── registry.json
-├── skills/
-│   ├── java-code-reviewer/
-│   ├── react-code-reviewer/
-│   ├── goal-driven-development/
-│   └── project-knowledge-capture/
-├── scripts/
-└── .github/workflows/
+├── README.md
+├── CONTRIBUTING.md
+├── LICENSE
+└── skills/
+    ├── java-code-reviewer/
+    ├── react-code-reviewer/
+    ├── go-code-reviewer/
+    ├── python-code-reviewer/
+    ├── node-code-reviewer/
+    ├── goal-driven-development/
+    └── project-knowledge-capture/
 ```
 
-The root `registry.json` composes nested skill registries with `include`. Each skill owns its own `registry.json`, keeping additions small and reviewable.
-
-## Add A Skill
-
-1. Create `skills/<skill-name>/`.
-2. Add `SKILL.md`, `manifest.json`, prompts, examples, and optional agent metadata.
-3. Add `skills/<skill-name>/registry.json` with a single `registry:item`.
-4. Add the nested registry path to root `registry.json`.
-5. Run validation and build.
-
-Use `registry:file` entries with explicit `target` paths. The default convention is:
+Each skill folder contains:
 
 ```text
-~/.skills/<skill-name>/<file>
+skills/<name>/
+├── SKILL.md            # required: frontmatter (name, description) + body
+├── README.md           # human-readable description
+├── prompts/            # scenario-specific prompt fragments (loaded on demand)
+└── examples/           # bad/good code samples and review outputs
 ```
 
-In shadcn registry targets, `~` resolves to the consumer project's root.
+## Authoring A Skill
 
-## Build
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full contract
+(frontmatter schema, `SKILL.md` body conventions, prompts/examples
+naming, bad/good pairing rules, quality bar).
 
-Validate local registry structure:
+Quick version:
+
+1. Create `skills/<name>/` with a `SKILL.md` whose frontmatter
+   `name` matches the directory and `description` is ≥ 40 chars.
+2. Add `prompts/` (one scenario per file, progressive disclosure) and
+   `examples/` (every `bad-*` paired with a `good-*`).
+3. Update the "Included Skills" list above and any cross-skill
+   dependency blocks that reference the new skill.
+4. Open a PR. `npx skills` consumers pull from `main` directly, so the
+   next install picks up new skills without version coordination.
+
+## Local Checks
 
 ```sh
 ./scripts/validate.sh
 ```
 
-Build distributable artifacts:
+Runs two structural assertions without external toolchains (no `go`, no
+`javac`, no `tsc` required):
 
-```sh
-./scripts/build.sh
-```
+- **`scripts/smoke.sh`** — every `skills/<name>/SKILL.md` has valid
+  frontmatter, a matching directory name, and resolves every
+  `prompts/` and `examples/` path it references.
+- **`scripts/check-examples.sh`** — every reviewer has a `bad-*` /
+  `good-*` pair, every `good-*` is non-trivial and self-identifies,
+  and no stray filenames slipped into `examples/`.
 
-Artifacts are written to `dist/`:
-
-- `registry.json`: flattened registry payload with included items resolved
-- `items/*.json`: generated registry item payloads
-- `skills-registry-<version>.tar.gz`
-- `skills-registry-<version>.zip`, when `zip` is available
-- `SHA256SUMS`
-
-## GitHub Registry Notes
-
-GitHub registry installation requires a public GitHub repository with `registry.json` at the repository root. Private registries require a separate namespace and authentication setup.
+Use as a local pre-merge check or as a CI step.
 
 ## License
 
