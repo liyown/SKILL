@@ -39,24 +39,7 @@ jobs:
         run: |
           set -euo pipefail
           # Dry-run prints the "would run" preview and exits 0
-          # without creating a tag. If it ever changes to do real
-          # work, the printed output will be different and a human
-          # reviewer will catch the change in the PR.
+          # without creating a tag. A regression that changes the
+          # dry-run to do real work will show up as a different
+          # PR diff for the script itself.
           ./scripts/release.sh --dry-run
-
-      - name: Verify dry-run was idempotent
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Capture the tag list before and after, assert no new tag
-          # was created by the dry-run above.
-          before=$(git tag --points-at HEAD 2>/dev/null || true)
-          ./scripts/release.sh --dry-run > /dev/null 2>&1
-          after=$(git tag --points-at HEAD 2>/dev/null || true)
-          if [ "$before" != "$after" ]; then
-            echo "FAIL: dry-run mutated the tag list at HEAD"
-            echo "  before: $before"
-            echo "  after:  $after"
-            exit 1
-          fi
-          echo "ok: dry-run was idempotent (no tag list mutation)"

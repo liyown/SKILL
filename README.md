@@ -199,7 +199,7 @@ Quick version:
 ./scripts/validate.sh
 ```
 
-Runs two structural assertions without external toolchains (no `go`, no
+Runs structural assertions without external toolchains (no `go`, no
 `javac`, no `tsc` required):
 
 - **`scripts/smoke.sh`** — every `skills/<name>/SKILL.md` has valid
@@ -208,8 +208,12 @@ Runs two structural assertions without external toolchains (no `go`, no
 - **`scripts/check-examples.sh`** — every reviewer has a `bad-*` /
   `good-*` pair, every `good-*` is non-trivial and self-identifies,
   and no stray filenames slipped into `examples/`.
+- **`scripts/release.sh`** — cut a release: reads `git describe`,
+  bumps the version, runs `validate.sh`, tags, and pushes. See the
+  script header for flags (`--dry-run`, `--bump-mode`, `--notes-from`,
+  `--no-publish`).
 
-Use as a local pre-merge check or as a CI step.
+Use `validate.sh` as a local pre-merge check or as a CI step.
 
 ## License
 
