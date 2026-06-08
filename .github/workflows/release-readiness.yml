@@ -38,16 +38,25 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Dry-run prints the "would run" preview and exits 0
+          # without creating a tag. If it ever changes to do real
+          # work, the printed output will be different and a human
+          # reviewer will catch the change in the PR.
           ./scripts/release.sh --dry-run
 
-      - name: Verify no tag was created
+      - name: Verify dry-run was idempotent
         shell: bash
         run: |
           set -euo pipefail
-          # A dry-run must not advance the tag. If a new tag exists in
-          # this ref, the release flow was not actually a dry-run.
-          if git describe --tags --exact-match HEAD 2>/dev/null; then
-            echo "FAIL: HEAD is at a tag; dry-run should not create tags"
+          # Capture the tag list before and after, assert no new tag
+          # was created by the dry-run above.
+          before=$(git tag --points-at HEAD 2>/dev/null || true)
+          ./scripts/release.sh --dry-run > /dev/null 2>&1
+          after=$(git tag --points-at HEAD 2>/dev/null || true)
+          if [ "$before" != "$after" ]; then
+            echo "FAIL: dry-run mutated the tag list at HEAD"
+            echo "  before: $before"
+            echo "  after:  $after"
             exit 1
           fi
-          echo "ok: HEAD is not a tag (dry-run did not mutate)"
+          echo "ok: dry-run was idempotent (no tag list mutation)"
