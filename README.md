@@ -4,6 +4,18 @@ A collection of reusable AI skills installed with the [skills.sh](https://skills
 CLI (`npx skills`). Each skill lives in its own directory under `skills/` and
 is discoverable by name.
 
+## Latest Release
+
+**v0.3.0** (2026-06-08). Pin to a specific tag with `#v0.3.0`:
+
+```sh
+npx skills add liyown/skills-registry#v0.3.0 --skill java-code-reviewer
+```
+
+See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
+and per-version highlights. 11 commits since v0.2.0; see
+`git log v0.2.0..v0.3.0` for the full diff.
+
 ## Install
 
 ```sh
