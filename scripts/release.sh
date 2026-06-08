@@ -17,6 +17,10 @@
 #   --yes  / -y    skip the interactive confirmation prompt
 #   --dry-run      print every action that would be taken, run validate,
 #                  but do NOT create the tag, do NOT push
+#   --notes-from <file>  read this file as the GitHub release notes body. The
+#                        script does not publish to GitHub itself; pipe the file
+#                        to `gh release create --notes-file` yourself.
+#   --no-publish      do not push the tag or branch to origin (local-only release)
 #   --bump X.Y.Z   override the auto-bumped version (still validated to be
 #                  > the current tag's version)
 #   --help / -h    print this help and exit
@@ -43,12 +47,17 @@ fi
 YES=""
 DRY_RUN=""
 BUMP_OVERRIDE=""
+NOTES_FROM=""
+NO_PUBLISH=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --yes|-y) YES=1 ;;
         --dry-run) DRY_RUN=1 ;;
         --bump) BUMP_OVERRIDE="$2"; shift ;;
         --bump=*) BUMP_OVERRIDE="${1#--bump=}" ;;
+        --notes-from) NOTES_FROM="$2"; shift ;;
+        --notes-from=*) NOTES_FROM="${1#--notes-from=}" ;;
+        --no-publish) NO_PUBLISH=1 ;;
         --help|-h) print_help; exit 0 ;;
         *) echo "unknown flag: $1" >&2; exit 1 ;;
     esac
@@ -113,11 +122,23 @@ echo
 if [ -n "$DRY_RUN" ]; then
     echo "DRY RUN: would run:"
     echo "  git tag -a $NEXT_TAG -m \"Release $NEXT_TAG (auto-generated; $COMMITS_SINCE commits since $CURRENT_TAG)\""
-    echo "  git push origin HEAD"
-    echo "  git push origin $NEXT_TAG"
+    if [ -n "$NO_PUBLISH" ]; then
+        echo "  (would skip push: --no-publish set; tag stays local)"
+    else
+        echo "  git push origin HEAD"
+        echo "  git push origin $NEXT_TAG"
+    fi
+    if [ -n "$NOTES_FROM" ]; then
+        echo "  gh release create $NEXT_TAG --notes-file $NOTES_FROM (not part of this script)"
+    fi
     echo
     echo "DRY RUN: no tag created, no push performed"
     exit 0
+fi
+
+if [ -n "$NOTES_FROM" ] && [ ! -f "$NOTES_FROM" ]; then
+    echo "FAIL: --notes-from $NOTES_FROM does not exist or is not a regular file" >&2
+    exit 1
 fi
 
 if [ -z "$YES" ]; then
@@ -139,6 +160,12 @@ Edit this annotation before pushing if you want a hand-written release
 note; re-run with --yes after editing."
 
 # 6. push
+if [ -n "$NO_PUBLISH" ]; then
+    echo "skipping push (--no-publish): tag $NEXT_TAG is local only"
+    echo "  inspect: git show $NEXT_TAG"
+    echo "  publish later with: git push origin HEAD && git push origin $NEXT_TAG"
+    exit 0
+fi
 git push origin HEAD
 git push origin "$NEXT_TAG"
 
@@ -147,3 +174,9 @@ echo
 echo "released: $NEXT_TAG"
 echo "  inspect: git show $NEXT_TAG"
 echo "  browse: https://github.com/liyown/skills-registry/releases/tag/$NEXT_TAG"
+if [ -n "$NOTES_FROM" ]; then
+    echo
+    echo "release notes file is at: $NOTES_FROM"
+    echo "publish to GitHub with:"
+    echo "  gh release create $NEXT_TAG --title \"$NEXT_TAG\" --notes-file $NOTES_FROM --target main"
+fi
