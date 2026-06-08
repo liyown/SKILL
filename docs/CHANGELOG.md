@@ -7,6 +7,25 @@ history for offline review.
 
 ## Unreleased
 
+## 0.3.5 (2026-06-08)
+
+Tag: `v0.3.5`. Commits since v0.3.4: 1.
+
+### Added
+
+- `docs/releases/INDEX.md` — cross-reference for every release.
+  Lists tag, release date, commit count since the previous tag,
+  GitHub release URL, and the in-repo mirror file path. Also
+  documents the full release flow (the `release.sh` flags and
+  the `release-readiness` CI workflow). v0.3.0 and earlier have
+  no mirror (pre-script era); v0.3.1+ have mirrors.
+
+### Installation
+
+```sh
+npx skills add liyown/skills-registry#v0.3.5 --skill java-code-reviewer
+```
+
 ## 0.3.4 (2026-06-08)
 
 Tag: `v0.3.4`. Commits since v0.3.3: 2.

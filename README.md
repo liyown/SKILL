@@ -6,21 +6,20 @@ is discoverable by name.
 
 ## Latest Release
 
-**v0.3.4** (2026-06-08). Pin to a specific tag with `#v0.3.4`:
+**v0.3.5** (2026-06-08). Pin to a specific tag with `#v0.3.5`:
 
 ```sh
-npx skills add liyown/skills-registry#v0.3.4 --skill java-code-reviewer
+npx skills add liyown/skills-registry#v0.3.5 --skill java-code-reviewer
 ```
 
-v0.3.3 → v0.3.4 extends `scripts/release.sh` with two new flags:
-`--notes-from <file>` validates a release notes file and prints the
-exact `gh release create` command to run after the tag is pushed
-(replacing the brittle inline `gh release create --notes "..."` flow
-that broke on shell-globbed content), and `--no-publish` creates the
-tag locally without pushing. 2 commits since v0.3.3.
+v0.3.4 → v0.3.5 adds `docs/releases/INDEX.md`, a cross-reference
+for every release: date, commit count since the previous tag,
+GitHub release URL, and the in-repo mirror file path. Includes a
+"How a release flows" section documenting the `release.sh` flags
+and the `release-readiness` CI workflow. 1 commit since v0.3.4.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
-and per-version highlights. Run `git log v0.3.3..v0.3.4` for the full
+and per-version highlights. Run `git log v0.3.4..v0.3.5` for the full
 diff since the last release.
 
 ## Install
