@@ -1,6 +1,6 @@
 ---
 name: project-knowledge-capture
-description: "Capture durable project knowledge after implementation: goals, context, key entrypoints, CodeGraph findings, decisions, verification results, review conclusions, and follow-up notes into docs/knowledge. Use when development completes and project knowledge should be preserved without secrets or process noise."
+description: "Capture durable project knowledge after implementation: goals, context, key entrypoints, CodeGraph findings, decisions, verification results, review conclusions, and follow-up notes into docs/knowledge — so the next developer (or the next session) can answer 'why was this done' and 'what to be careful about' in minutes, not days. Use when development completes and project knowledge should be preserved without secrets or process noise."
 metadata:
   short-description: Capture durable project knowledge
 ---
