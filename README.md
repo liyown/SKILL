@@ -20,9 +20,10 @@ now ends with "so the next developer (or the next session) can
 answer 'why was this done' and 'what to be careful about' in
 minutes, not days". 1 commit since v0.3.8.
 
-All 7 skill frontmatter descriptions now end with a
-severity-tier router clause. 4 commits of router tuning across
-v0.3.8 and v0.3.9.
+All 5 reviewer frontmatter descriptions end with a production-incident
+router clause. The 2 workflow-skill descriptions end with a "Use when
+..." clause scoped to the workflow trigger. 4 commits of router tuning
+across v0.3.8 and v0.3.9.
 
 See [docs/CHANGELOG.md](./docs/CHANGELOG.md) for the full release history
 and per-version highlights. Run `git log v0.3.8..v0.3.9` for the full
@@ -93,10 +94,10 @@ uses to decide whether to load the skill.
 | Skill | Load when you are … |
 | --- | --- |
 | `java-code-reviewer` | … reviewing a Java / Spring / MyBatis / Kafka / Reactor change |
-| `react-code-reviewer` | … reviewing a React / TypeScript / Next.js change (frontend, not Node backend) |
-| `go-code-reviewer` | … reviewing a Go / gRPC / sqlx change |
+| `react-code-reviewer` | … reviewing a React / TypeScript / Next.js / Vite change (frontend, not Node backend) |
+| `go-code-reviewer` | … reviewing a Go / gRPC / sqlx / GORM change |
 | `python-code-reviewer` | … reviewing a Python / asyncio / SQLAlchemy / FastAPI change |
-| `node-code-reviewer` | … reviewing a Node.js / Express / Fastify / Prisma / TypeORM change |
+| `node-code-reviewer` | … reviewing a Node.js / Express / Fastify / Koa / Hono / Prisma / TypeORM / Sequelize / Knex change |
 
 Each reviewer ships a `prompts/reviewer.md` (severity ladder + output
 contract) and 6-10 scenario-specific prompts (see the Coverage
@@ -125,6 +126,7 @@ reviewer covers; cell entries are the scenario prompt file names.
 | --- | --- | --- | --- | --- | --- |
 | Framework / runtime | `spring-reviewer.md` | `nextjs-reviewer.md` | `rpc-reviewer.md` | `web-reviewer.md` | `http-reviewer.md` |
 | Concurrency / async | `concurrency-reviewer.md`, `reactor-reviewer.md` | — | `concurrency-reviewer.md` | `async-reviewer.md` | `async-reviewer.md` |
+| Context propagation | — | — | `context-reviewer.md` | — | — |
 | Error handling | — | `error-boundary-reviewer.md` | `error-reviewer.md` | `error-reviewer.md` | `error-reviewer.md` |
 | Database / ORM | `mybatis-reviewer.md` | — | `sql-reviewer.md` | `sql-reviewer.md` | `sql-reviewer.md` |
 | Caching / messaging | `redis-kafka-reviewer.md` | — | — | — | — |
