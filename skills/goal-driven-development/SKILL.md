@@ -35,7 +35,7 @@ Invoke dependent skills when relevant:
 
 ## Install Path
 
-When a consumer runs `npx skills add <owner>/skills-registry --skill goal-driven-development`,
+When a consumer runs `npx skills add liyown/skills-registry --skill goal-driven-development`,
 the entire `skills/goal-driven-development/` directory is copied to
 their local skills directory. The default location is:
 
@@ -54,7 +54,7 @@ the two always-loaded prompts. Scenario-specific reviewer skills
 them separately:
 
 ```sh
-npx skills add <owner>/skills-registry \
+npx skills add liyown/skills-registry \
   --skill goal-driven-development \
   --skill java-code-reviewer \
   --skill react-code-reviewer \

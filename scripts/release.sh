@@ -88,9 +88,23 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
-CURRENT_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+CURRENT_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
 HEAD_SHA=$(git rev-parse --short HEAD)
-COMMITS_SINCE=$(git rev-list --count "${CURRENT_TAG}..HEAD")
+
+# If no annotated tag exists yet, the first release must be specified
+# explicitly with --bump. Auto-bumping from a missing tag would guess wrong
+# (v0.0.0 -> v0.0.1 by default is almost never what a fresh repo wants).
+if [ -z "$CURRENT_TAG" ]; then
+    if [ -z "$BUMP_OVERRIDE" ]; then
+        echo "FAIL: no annotated tag exists yet; pass --bump vX.Y.Z for the first release" >&2
+        exit 1
+    fi
+    CURRENT_TAG="(none)"
+    # Count all commits from the root for the first release
+    COMMITS_SINCE=$(git rev-list --count HEAD)
+else
+    COMMITS_SINCE=$(git rev-list --count "${CURRENT_TAG}..HEAD")
+fi
 
 echo "current tag : $CURRENT_TAG"
 echo "HEAD        : $HEAD_SHA"
@@ -100,6 +114,8 @@ echo "bump mode   : $BUMP_MODE"
 # 2. derive next version
 case "$COMMITS_SINCE" in
     0)
+        # Only relevant when a real tag existed before; with no prior tag the
+        # auto-bump path is unreachable (we require --bump above).
         echo "HEAD is already tagged at $CURRENT_TAG; nothing to release"
         exit 0
         ;;
