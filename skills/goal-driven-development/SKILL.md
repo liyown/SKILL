@@ -1,6 +1,6 @@
 ---
 name: goal-driven-development
-description: "Execute existing goals or specs through a structured development workflow: read the goal, use CodeGraph for codebase context and impact analysis, implement scoped changes, verify with tests/builds, run Java, React, Go, Python, or Node review gates, and capture durable project knowledge — minimizing the risk of a reverted merge, a missed dependency, or a code-review block at PR time. Use when the user asks for goal-driven development, spec-driven implementation, CodeGraph-assisted development, or end-to-end feature execution."
+description: "Execute existing goals or specs through a structured development workflow: read the goal, use CodeGraph for codebase context and impact analysis, implement scoped changes, verify with tests/builds, run Java, React, Go, Python, or Node review gates, and capture durable project knowledge — minimizing the risk of a reverted merge, a missed dependency, or a code-review block at PR time. Use when the user asks for goal-driven development, spec-driven implementation, CodeGraph-assisted development, or end-to-end feature execution. Do NOT use for: open-ended brainstorming, ad-hoc refactors without a goal, or writing a new spec from scratch."
 metadata:
   short-description: CodeGraph-assisted development workflow
 ---

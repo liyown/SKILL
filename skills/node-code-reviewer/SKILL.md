@@ -1,6 +1,6 @@
 ---
 name: node-code-reviewer
-description: Review Node.js backend services, pull requests, diffs, and snippets for production-risk bugs in async/await, event loop, error handling, streams, Prisma/TypeORM/Sequelize/Knex, Fastify/Express/Koa/Hono, timeouts, concurrency, security, and microservice architecture — focusing on capital-loss, data-corruption, authorization-bypass, and incident-causing defects. Use for event-loop blocking by readFileSync, missing await/unhandledRejection, prototype pollution, Prisma $executeRawUnsafe, and incident-blocking PR review.
+description: Review Node.js backend services, pull requests, diffs, and snippets for production-risk bugs in async/await, event loop, error handling, streams, Prisma/TypeORM/Sequelize/Knex, Fastify/Express/Koa/Hono, timeouts, concurrency, security, and microservice architecture — focusing on capital-loss, data-corruption, authorization-bypass, and incident-causing defects. Use for event-loop blocking by readFileSync, missing await/unhandledRejection, prototype pollution, Prisma $executeRawUnsafe, and incident-blocking PR review. Do NOT use for: ESLint/Prettier style nits, naming, or non-incident review.
 metadata:
   short-description: Evidence-driven Node backend review
 ---
