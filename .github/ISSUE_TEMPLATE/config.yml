@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Latest release notes
-    url: https://github.com/liyown/skills-registry/blob/main/docs/releases/INDEX.md
-  - name: Contributing guide
-    url: https://github.com/liyown/skills-registry/blob/main/CONTRIBUTING.md
-  - name: "What Makes A Great Skill"
-    url: https://github.com/liyown/skills-registry/blob/main/CONTRIBUTING.md#what-makes-a-great-skill
