@@ -1,0 +1,7 @@
+interface:
+  display_name: "DSHX Hub Operations"
+  short_description: "Adaptive, evidence-led DSHX Hub operations"
+  default_prompt: "Use $dshx-hub-ops to operate DSHX Hub end to end with available research tools, preserved evidence, and approval-aware recovery."
+
+policy:
+  allow_implicit_invocation: true
