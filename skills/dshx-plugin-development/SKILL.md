@@ -20,7 +20,7 @@ Read [references/api-map.md](references/api-map.md) for the contribution being c
 Prefer these source-of-truth layers, in order:
 
 1. installed package types and the project lockfile;
-2. `dshx check` compatibility and provider-edge diagnostics;
+2. offline `dshx check` type, compatibility, migration, and provider-edge diagnostics;
 3. live `dshx inspect` results for provider-owned Slots, Services, or Events;
 4. the published DSHX API reference;
 5. adjacent DSH source only for investigation, never as proof of published compatibility.
@@ -30,10 +30,11 @@ Prefer these source-of-truth layers, in order:
 - Put Node and Cordis behavior in the Host, React behavior in the Client, and only portable contracts in shared modules.
 - Let official services own scope, order semantics, shadowing, assembly, replay, persistence, transport, HMR, and disposal.
 - Use `ctx.effect()` or the official service lifecycle for resources started from `setup(ctx)`.
-- Treat Conversation Components as experimental and use only official `SessionEventMap` event keys.
+- Treat Conversation Components as experimental, use `defineConversation(...).render(Component)`, and accept only official `SessionEventMap` event keys.
 - Do not add a duplicate `ClientDefinition.settings`; retained `useSettings()` declares that capability.
-- Prefer retained `useApi()` or `useQuery()` over duplicate eager Client API declarations.
+- Prefer retained `useApi()` or `useApiQuery()`; `defineClient()` has no API declaration.
+- Add CSS tooling through `client.vite.plugins` or `host.vite.plugins`. Tailwind is opt-in, uses its standard Vite plugin, and should omit Preflight inside DSH's shared document unless the user intentionally accepts a global reset.
 
 ## Finish with observable verification
 
-Run checks proportional to the change and report exactly what ran. At minimum, typecheck or `pnpm check` and build the plugin. For runtime behavior, use the installed DSH version and verify the relevant registration, interaction, restart, or HMR path; do not present simulated tests as real-runtime proof.
+Run checks proportional to the change and report exactly what ran. At minimum, run the offline `pnpm check` and build the plugin. Use `pnpm exec dshx check --runtime` and the installed DSH version when the requested behavior depends on a linked Profile, registration, interaction, restart, or HMR path; do not present simulated tests as real-runtime proof.
