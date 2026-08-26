@@ -1,40 +1,37 @@
 ---
 name: dshx-plugin-development
-description: Build, modify, diagnose, or review out-of-tree DeepSeek Harness plugins authored with DSHX. Use for @becomeopc/dshx, create-dshx, dshx.config.ts, Host or Client contributions, Prompt, Settings, typed API, Slots, and Conversation Components. Do not use for DSH core development or DSHX Hub catalog operations.
+description: Create, modify, diagnose, review, package, or Preview-publish an out-of-tree DeepSeek Harness plugin authored with DSHX. Use for @becomeopc/dshx, create-dshx, dshx.config.ts, Host/Client contributions, defineLocale, Prompt, Settings, typed API, Slots, Conversation Components, dshx check/build/dev/inspect/add, and DSH Profile verification. Do not use for DSH core implementation or Framework Hub administration.
 ---
 
 # DSHX Plugin Development
 
-Develop the requested plugin against the installed DSH contract while keeping DSHX build-time and runtime-thin. Do not create parallel registries, lifecycle managers, transports, persistence, or assembly behavior that official DSH and Cordis already own.
+Build the requested plugin from project evidence and verify the actual DSH path it depends on. Keep DSHX build-time and runtime-thin; official DSH and Cordis retain runtime ownership.
 
-## Start with project evidence
+## Establish the project contract
 
-Read [references/development-workflow.md](references/development-workflow.md) before changing a project. Determine whether this is a new plugin, an existing DSHX plugin, or a DSHX framework repository change. Inspect the repository state, package manifest, `dshx.config.ts`, Host and Client entries, installed versions, and existing tests before choosing an API.
+Read [references/development-workflow.md](references/development-workflow.md) before changing files. Classify the workspace as a new plugin, an existing DSHX plugin, or the DSHX framework repository. Inspect git state, lockfile/package manager, package manifest, config, entries, installed versions, Profile evidence, and tests. Use pnpm for DSHX repository work and generated Preview examples. Preserve unrelated work.
 
-Use `pnpm`. Preserve unrelated work and do not publish, deploy, mutate a DSH Profile beyond the requested development workflow, or change public compatibility claims without explicit authorization and verification.
+Prefer evidence in this order:
 
-## Select only the required surface
+1. installed package types, manifest, and lockfile;
+2. offline `dshx check` diagnostics;
+3. runtime `dshx inspect` results for the active Composition;
+4. current published DSHX references;
+5. adjacent DSH source only for investigation, never as published compatibility proof.
 
-Read [references/api-map.md](references/api-map.md) for the contribution being changed. Follow the linked API reference for its current signature instead of reconstructing an API from memory.
+## Route to the required authoring surface
 
-Prefer these source-of-truth layers, in order:
+Read only the relevant section of [references/api-map.md](references/api-map.md). Do not reconstruct public signatures from memory.
 
-1. installed package types and the project lockfile;
-2. offline `dshx check` type, compatibility, migration, and provider-edge diagnostics;
-3. live `dshx inspect` results for provider-owned Slots, Services, or Events;
-4. the published DSHX API reference;
-5. adjacent DSH source only for investigation, never as proof of published compatibility.
+- Keep Node, secrets, filesystem, validation, and privileged actions in Host code.
+- Keep React and Hooks in Client code; shared modules must remain portable contracts.
+- Use `defineLocale()` for plugin-owned `zh`/`en` copy. Do not ask authors to augment `LocaleNamespaceMap`; raw namespace strings are only for provider-owned advanced integrations.
+- Declare official runtime/provider packages at the manifest boundary. Generated Cordis injects do not replace `dsh.client.inject` package edges.
+- Let official services own registries, scope, ordering, Prompt assembly, persistence, transport, replay, HMR, and disposal. Register long-lived resources with the official lifecycle.
+- Treat Conversation Components and programmatic Tooling as Experimental.
 
-## Preserve runtime ownership
+## Prove the requested behavior
 
-- Put Node and Cordis behavior in the Host, React behavior in the Client, and only portable contracts in shared modules.
-- Let official services own scope, order semantics, shadowing, assembly, replay, persistence, transport, HMR, and disposal.
-- Use `ctx.effect()` or the official service lifecycle for resources started from `setup(ctx)`.
-- Treat Conversation Components as experimental, use `defineConversation(...).render(Component)`, and accept only official `SessionEventMap` event keys.
-- Do not add a duplicate `ClientDefinition.settings`; retained `useSettings()` declares that capability.
-- Prefer retained `useApi()` or `useApiQuery()`; `defineClient()` has no API declaration.
-- Add CSS tooling through `client.vite.plugins` or `host.vite.plugins`. Tailwind is opt-in, uses its standard Vite plugin, and should omit Preflight inside DSH's shared document unless the user intentionally accepts a global reset.
+At minimum run the plugin's offline check, relevant tests, and build. Use runtime check and a real `dshx dev` session when the result depends on a Profile, registration, transport, UI, restart, or HMR. Verify the exact user path; distinguish offline/type/build evidence from real DSH evidence.
 
-## Finish with observable verification
-
-Run checks proportional to the change and report exactly what ran. At minimum, run the offline `pnpm check` and build the plugin. Use `pnpm exec dshx check --runtime` and the installed DSH version when the requested behavior depends on a linked Profile, registration, interaction, restart, or HMR path; do not present simulated tests as real-runtime proof.
+If packaging or Preview publication is requested, also read [references/release-checklist.md](references/release-checklist.md). Inspect the actual archive and preserve npm `latest`. Publishing, pushing, deploying, catalog submission, and Profile mutation beyond the requested development loop require explicit authorization.

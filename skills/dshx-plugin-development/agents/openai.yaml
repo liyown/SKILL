@@ -1,4 +1,4 @@
 interface:
   display_name: "DSHX Plugin Development"
   short_description: "Build and verify typed DSHX plugins"
-  default_prompt: "Use $dshx-plugin-development to build or modify this DSHX plugin and verify it against the installed DSH runtime."
+  default_prompt: "Use $dshx-plugin-development to build or modify this DSHX plugin from project evidence, then verify the requested path against the installed DSH runtime."

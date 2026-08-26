@@ -1,41 +1,72 @@
-# DSHX API map
+# DSHX authoring API map
 
-Open only the reference relevant to the requested contribution. English URLs are listed; replace `/en/` with `/zh/` for Chinese.
+Open only the reference for the requested contribution. English URLs are listed; replace `/en/` with `/zh/` for Chinese. Verify signatures against the installed package.
 
 | Need                               | Public module and API                                                                                             | Reference                                  |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
 | Host module, Tool, Command, Prompt | `@becomeopc/dshx/host`: `defineHost`, `defineTool`, `defineCommand`, `definePromptSection`, `definePromptContext` | https://dshx.io/en/docs/host-contributions |
-| Client module or React Slot        | `@becomeopc/dshx/client`: `defineClient`, `defineSlot`                                                            | https://dshx.io/en/docs/project-model      |
+| Client, plugin copy, or React Slot | `@becomeopc/dshx/client`: `defineClient`, `defineLocale`, `defineSlot`, `PropsLocaleOf`                           | https://dshx.io/en/docs/project-model      |
 | Persistent typed configuration     | `@becomeopc/dshx/settings`: `defineSettings`; Client `useSettings`                                                | https://dshx.io/en/docs/settings           |
-| Host calls from React              | `@becomeopc/dshx/api`: `method`, `defineApi`; Client `useApi`, `useApiQuery`                                       | https://dshx.io/en/docs/typed-api          |
+| Host calls from React              | `@becomeopc/dshx/api`: `method`, `defineApi`; Client `useApi`, `useApiQuery`                                      | https://dshx.io/en/docs/typed-api          |
 | Assembled conversation node UI     | `@becomeopc/dshx/experimental/conversation`: `defineConversation(...).render(Component)`                          | https://dshx.io/en/docs/conversation       |
-| Project configuration and builds  | Root/config `defineConfig`; bounded `host.vite.plugins` and `client.vite.plugins`; `dshx` binary                   | https://dshx.io/en/docs/cli-and-inspect    |
-| Programmatic compiler/compat/CLI   | `@becomeopc/dshx/tooling` (`@experimental`)                                                                        | https://dshx.io/en/docs/compatibility      |
-| DSH version and capabilities       | `dshx check`; programmatic access from `@becomeopc/dshx/tooling`                                                   | https://dshx.io/en/docs/compatibility       |
+| Config, build, dev, inspect, add   | Root/config `defineConfig`; bounded Vite plugins; `dshx` CLI                                                      | https://dshx.io/en/docs/cli-and-inspect    |
+| Programmatic compiler/compat/CLI   | `@becomeopc/dshx/tooling` (Experimental, Node-only)                                                               | https://dshx.io/en/docs/compatibility      |
 
-## Contribution rules that affect design
+## Host contributions
 
-### Host
+`defineHost()` accepts Tools, Commands, Prompt Sections/Contexts, Settings Host ownership, typed API Hosts, and top-level `setup(ctx)`. DSHX derives and deduplicates official service injection, but official packages retain registration, scope, ordering, shadowing, assembly, and disposal. Use an `AbortSignal` for cancellable work and keep browser-submitted data away from process/command selection.
 
-`defineHost()` registers Tools, Commands, Prompts, Settings, APIs, then top-level `setup(ctx)`. Non-empty fields add and deduplicate their required official service injection. Preserve declaration order and let official packages handle duplicates and disposal.
+## Client, Locale, and Slots
 
-### Client
+`defineClient()` accepts `name`, direct Cordis `inject`, opaque `locales`, experimental `conversations`, `slots`, and `setup`. It has no API or Settings declaration field.
 
-`defineSlot(name, options)` is typed by the provider's augmented `SlotMap`. `defineClient()` has `slots`, explicit experimental `conversations`, and `setup`; it has no API or Settings declaration.
+For plugin-owned copy:
+
+```tsx
+import {
+  defineClient,
+  defineLocale,
+  defineSlot,
+  type PropsLocaleOf,
+} from "@becomeopc/dshx/client";
+
+const copy = defineLocale("my-plugin.status", {
+  zh: { ready: "已就绪" },
+  en: { ready: "Ready" },
+});
+
+function Status({ t }: PropsLocaleOf<typeof copy>) {
+  return <p>{t("ready")}</p>;
+}
+
+const slot = defineSlot("sidebar.footer.action", {
+  id: "my-plugin.status",
+  locale: copy,
+  component: Status,
+});
+
+export default defineClient({ locales: [copy], slots: [slot] });
+```
+
+`zh` and `en` are both required, have exactly the same keys, and contain string values. `LocaleKeyOf<typeof copy>` extracts those keys; `PropsLocaleOf<typeof copy>` provides the typed `t`. A non-empty `locales` array registers/disposes dictionaries before Slots and automatically requests the Cordis `locale` service. The package still needs `@deepseek-ai/dsh-client-locale` in `dsh.client.inject`. Raw namespace strings remain for official/provider-augmented `LocaleNamespaceMap` use and do not register dictionaries.
+
+`defineSlot(name, options)` is typed by the provider's augmented `SlotMap`. Import that provider's Client declaration and package edge. Pass the opaque result to `defineClient.slots`; do not inspect or recreate it.
 
 Retained Hooks are analyzed after tree-shaking:
 
-- `useSettings()` requires `settingsScope` and the `@deepseek-ai/dsh-client-ui-settings` Manifest edge.
-- `useApi()` or `useApiQuery()` requires `connection` and the `@deepseek-ai/dsh-client-connection` edge.
+- `useSettings()` adds `settingsScope` and requires `@deepseek-ai/dsh-client-ui-settings`.
+- `useApi()` or `useApiQuery()` adds `connection` and requires `@deepseek-ai/dsh-client-connection`.
 
-### Settings
+## Settings and typed API
 
-Share one `defineSettings()` contract. Register it once in `defineHost({ settings: [...] })`. Use `contract.host({ base, validate, setup })` only for Host-only behavior. A schema containing `role('secret')` requires a Client decoder that removes readable secret values; mutation types may still allow write-only fields.
+Define each Settings contract once and register its Host ownership once. Host `base`, `validate`, and `setup` remain Node-only. Secret fields need a Client decoder that removes readable values; write-only mutations may still accept them.
 
-### Typed API
+Define unary API methods once, implement every method through `contract.host()`, and call them from a DSHX React renderer. Standard Schema transforms execute at the Host boundary. Authorization, revision fences, idempotency, durable outcomes, error redaction, and cancellation are Host responsibilities.
 
-Define unary methods once, implement every method with `contract.host()`, and call them from React with `useApi()` or `useApiQuery()`. Standard Schema transforms run once at the Host boundary. Treat authorization, revision fences, idempotency, and durable outcomes as Host responsibilities. Propagate `AbortSignal` where work can be cancelled.
+## Conversation Components
 
-### Conversation Components
+Define a non-empty `kind`, official Session event descriptors, deterministic `initial`, required `reduce` for updates, and optional `project`. Attach one React component with `.render(Component)` and place that opaque contribution in `defineClient.conversations`. Custom durable event vocabulary outside official `SessionEventMap` is not a published compatibility guarantee.
 
-Declare a non-empty `kind`, official Session event descriptors with at least one start role, deterministic `initial`, required `reduce` when updates exist, and optional publication/location/`project` projection. Attach a Hook-capable React component with `.render(Component)`, then add that single opaque contribution to `defineClient({ conversations: [...] })`; do not separately register its generated Definition or renderer.
+## Build extensions
+
+Use standard Vite plugin factories only through `host.vite.plugins` or `client.vite.plugins`. DSHX owns entries, targets, format, externals, chunks, and asset policy. Tailwind v4 should use its official Vite plugin, complete static class names, a plugin-specific prefix, and no Preflight unless a global DSH document reset is explicitly accepted.
